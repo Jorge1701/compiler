@@ -34,7 +34,7 @@ func (t *Tokenizer) Tokenize() []Token {
 	var buf []rune
 
 	for t.hasRune() {
-		if t.hasRune() && unicode.IsLetter(t.peek()) {
+		if unicode.IsLetter(t.peek()) {
 			buf = append(buf, t.consume())
 
 			for t.hasRune() && unicode.IsLetter(t.peek()) || unicode.IsNumber(t.peek()) {
@@ -43,9 +43,9 @@ func (t *Tokenizer) Tokenize() []Token {
 
 			tokens = append(tokens, Token{TokenType: KEYWORD, Value: string(buf)})
 			buf = []rune{}
-		} else if t.hasRune() && unicode.IsSpace(t.peek()) {
+		} else if unicode.IsSpace(t.peek()) {
 			t.consume()
-		} else if t.hasRune() && unicode.IsNumber(t.peek()) {
+		} else if unicode.IsNumber(t.peek()) {
 			buf = append(buf, t.consume())
 
 			for t.hasRune() && unicode.IsNumber(t.peek()) {
@@ -54,7 +54,7 @@ func (t *Tokenizer) Tokenize() []Token {
 
 			tokens = append(tokens, Token{TokenType: LITERAL, Value: string(buf)})
 			buf = []rune{}
-		} else if t.hasRune() {
+		} else {
 			tokens = append(tokens, Token{TokenType: SEPARATOR, Value: string(t.consume())})
 		}
 	}

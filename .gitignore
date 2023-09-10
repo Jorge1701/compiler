@@ -23,3 +23,6 @@ go.work
 # NASM
 *.asm
 *.o
+
+# Test folder
+tests/*

@@ -33,35 +33,29 @@ func (t *Tokenizer) Tokenize() []Token {
 
 	var buf []rune
 
-	for t.index = 0; t.index < len(t.runes); t.index++ {
-		if t.hasRune() && unicode.IsLetter(t.getRune()) {
-			buf = append(buf, t.getRune())
+	for t.hasRune() {
+		if t.hasRune() && unicode.IsLetter(t.peek()) {
+			buf = append(buf, t.consume())
 
-			t.index++
-			for t.hasRune() && unicode.IsLetter(t.getRune()) || unicode.IsNumber(t.getRune()) {
-				buf = append(buf, t.getRune())
-				t.index++
+			for t.hasRune() && unicode.IsLetter(t.peek()) || unicode.IsNumber(t.peek()) {
+				buf = append(buf, t.consume())
 			}
-			t.index--
 
 			tokens = append(tokens, Token{TokenType: KEYWORD, Value: string(buf)})
 			buf = []rune{}
-		} else if t.hasRune() && unicode.IsSpace(t.getRune()) {
-			continue
-		} else if t.hasRune() && unicode.IsNumber(t.getRune()) {
-			buf = append(buf, t.getRune())
+		} else if t.hasRune() && unicode.IsSpace(t.peek()) {
+			t.consume()
+		} else if t.hasRune() && unicode.IsNumber(t.peek()) {
+			buf = append(buf, t.consume())
 
-			t.index++
-			for t.hasRune() && unicode.IsNumber(t.getRune()) {
-				buf = append(buf, t.getRune())
-				t.index++
+			for t.hasRune() && unicode.IsNumber(t.peek()) {
+				buf = append(buf, t.consume())
 			}
-			t.index--
 
 			tokens = append(tokens, Token{TokenType: LITERAL, Value: string(buf)})
 			buf = []rune{}
 		} else if t.hasRune() {
-			tokens = append(tokens, Token{TokenType: SEPARATOR, Value: string(t.getRune())})
+			tokens = append(tokens, Token{TokenType: SEPARATOR, Value: string(t.consume())})
 		}
 	}
 
@@ -72,6 +66,12 @@ func (t *Tokenizer) hasRune() bool {
 	return t.index < len(t.runes)
 }
 
-func (t *Tokenizer) getRune() rune {
+func (t *Tokenizer) peek() rune {
 	return t.runes[t.index]
+}
+
+func (t *Tokenizer) consume() rune {
+	r := t.runes[t.index]
+	t.index++
+	return r
 }

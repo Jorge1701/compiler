@@ -1,4 +1,4 @@
-package tokenizer
+package keywords
 
 type KeyWord string
 
@@ -10,7 +10,7 @@ var keywords = []KeyWord{
 	SALIR,
 }
 
-func isKeyWord(s string) bool {
+func IsKeyWord(s string) bool {
 	for _, kw := range keywords {
 		if s == string(kw) {
 			return true

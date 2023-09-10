@@ -2,6 +2,7 @@ package tokenizer
 
 import (
 	"bytes"
+	"compiler/keywords"
 	"unicode"
 )
 
@@ -44,7 +45,7 @@ func (t *Tokenizer) Tokenize() []Token {
 			}
 
 			value := buff.String()
-			if isKeyWord(value) {
+			if keywords.IsKeyWord(value) {
 				tokens = append(tokens, Token{TokenType: KEYWORD, Value: value})
 			} else {
 				tokens = append(tokens, Token{TokenType: IDENTIFIER, Value: value})

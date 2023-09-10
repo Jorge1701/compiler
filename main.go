@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"compiler/keywords"
 	"compiler/tokenizer"
 	"fmt"
 	"log"
@@ -16,7 +17,7 @@ func generateOutput(tokens []tokenizer.Token) []byte {
 
 	for i := 0; i < len(tokens); i++ {
 		t := tokens[i]
-		if t.TokenType == tokenizer.KEYWORD && tokenizer.KeyWord(t.Value) == tokenizer.SALIR {
+		if t.TokenType == tokenizer.KEYWORD && keywords.KeyWord(t.Value) == keywords.SALIR {
 			if i+1 < len(tokens) && tokens[i+1].TokenType == tokenizer.LITERAL {
 				if i+2 < len(tokens) && tokens[i+2].TokenType == tokenizer.SEPARATOR && tokens[i+2].Value == ";" {
 					buff.WriteString("    mov rax, 60\n")

@@ -7,7 +7,7 @@ sudo apt-get install nasm
 # Run
 
 ```
-nasm -felf64 file.asm
-ld file.o -o file
-./file
+nasm -felf64 output.asm
+ld output.o -o output
+./output
 ```

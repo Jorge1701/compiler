@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"compiler/keywords"
+	"compiler/parser"
 	"compiler/tokenizer"
 	"fmt"
 	"log"
@@ -46,6 +47,10 @@ func main() {
 	// Tokenize the input
 	t := tokenizer.NewTokenizer(bytes.Runes(bs))
 	tokens := t.Tokenize()
+
+	// Parse tokens
+	p := parser.NewParser(tokens)
+	p.Parse()
 
 	// Generate output
 	output := generateOutput(tokens)

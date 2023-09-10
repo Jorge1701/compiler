@@ -17,42 +17,61 @@ type Token struct {
 	Value     string
 }
 
-func Tokenize(runes []rune) []Token {
+type Tokenizer struct {
+	runes []rune
+	index int
+}
+
+func NewTokenizer(runes []rune) *Tokenizer {
+	return &Tokenizer{
+		runes: runes,
+	}
+}
+
+func (t *Tokenizer) Tokenize() []Token {
 	var tokens []Token
 
 	var buf []rune
 
-	for i := 0; i < len(runes); i++ {
-		if unicode.IsLetter(runes[i]) {
-			buf = append(buf, runes[i])
+	for t.index = 0; t.index < len(t.runes); t.index++ {
+		if t.hasRune() && unicode.IsLetter(t.getRune()) {
+			buf = append(buf, t.getRune())
 
-			i++
-			for unicode.IsLetter(runes[i]) || unicode.IsNumber(runes[i]) {
-				buf = append(buf, runes[i])
-				i++
+			t.index++
+			for t.hasRune() && unicode.IsLetter(t.getRune()) || unicode.IsNumber(t.getRune()) {
+				buf = append(buf, t.getRune())
+				t.index++
 			}
-			i--
+			t.index--
 
 			tokens = append(tokens, Token{TokenType: KEYWORD, Value: string(buf)})
 			buf = []rune{}
-		} else if unicode.IsSpace(runes[i]) {
+		} else if t.hasRune() && unicode.IsSpace(t.getRune()) {
 			continue
-		} else if unicode.IsNumber(runes[i]) {
-			buf = append(buf, runes[i])
+		} else if t.hasRune() && unicode.IsNumber(t.getRune()) {
+			buf = append(buf, t.getRune())
 
-			i++
-			for unicode.IsNumber(runes[i]) {
-				buf = append(buf, runes[i])
-				i++
+			t.index++
+			for t.hasRune() && unicode.IsNumber(t.getRune()) {
+				buf = append(buf, t.getRune())
+				t.index++
 			}
-			i--
+			t.index--
 
 			tokens = append(tokens, Token{TokenType: LITERAL, Value: string(buf)})
 			buf = []rune{}
-		} else {
-			tokens = append(tokens, Token{TokenType: SEPARATOR, Value: string(runes[i])})
+		} else if t.hasRune() {
+			tokens = append(tokens, Token{TokenType: SEPARATOR, Value: string(t.getRune())})
 		}
 	}
 
 	return tokens
+}
+
+func (t *Tokenizer) hasRune() bool {
+	return t.index < len(t.runes)
+}
+
+func (t *Tokenizer) getRune() rune {
+	return t.runes[t.index]
 }

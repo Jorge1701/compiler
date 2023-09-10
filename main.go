@@ -18,7 +18,9 @@ func main() {
 		log.Fatal("Error reading file: ", err)
 	}
 
-	tokens := tokenizer.Tokenize(bytes.Runes(bs))
+	t := tokenizer.NewTokenizer(bytes.Runes(bs))
+
+	tokens := t.Tokenize()
 	for _, t := range tokens {
 		fmt.Println(t.TokenType, t.Value)
 	}

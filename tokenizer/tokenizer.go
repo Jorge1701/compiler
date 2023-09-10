@@ -1,6 +1,7 @@
 package tokenizer
 
 import (
+	"bytes"
 	"unicode"
 )
 
@@ -31,29 +32,29 @@ func NewTokenizer(runes []rune) *Tokenizer {
 func (t *Tokenizer) Tokenize() []Token {
 	var tokens []Token
 
-	var buf []rune
+	buff := bytes.NewBuffer([]byte{})
 
 	for t.hasRune() {
 		if unicode.IsLetter(t.peek()) {
-			buf = append(buf, t.consume())
+			buff.WriteRune(t.consume())
 
-			for t.hasRune() && unicode.IsLetter(t.peek()) || unicode.IsNumber(t.peek()) {
-				buf = append(buf, t.consume())
+			for t.hasRune() && (unicode.IsLetter(t.peek()) || unicode.IsNumber(t.peek())) {
+				buff.WriteRune(t.consume())
 			}
 
-			tokens = append(tokens, Token{TokenType: KEYWORD, Value: string(buf)})
-			buf = []rune{}
+			tokens = append(tokens, Token{TokenType: KEYWORD, Value: buff.String()})
+			buff.Reset()
 		} else if unicode.IsSpace(t.peek()) {
 			t.consume()
 		} else if unicode.IsNumber(t.peek()) {
-			buf = append(buf, t.consume())
+			buff.WriteRune(t.consume())
 
 			for t.hasRune() && unicode.IsNumber(t.peek()) {
-				buf = append(buf, t.consume())
+				buff.WriteRune(t.consume())
 			}
 
-			tokens = append(tokens, Token{TokenType: LITERAL, Value: string(buf)})
-			buf = []rune{}
+			tokens = append(tokens, Token{TokenType: LITERAL, Value: buff.String()})
+			buff.Reset()
 		} else {
 			tokens = append(tokens, Token{TokenType: SEPARATOR, Value: string(t.consume())})
 		}

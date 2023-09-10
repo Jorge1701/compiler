@@ -8,9 +8,10 @@ import (
 type TokenType string
 
 const (
-	KEYWORD   TokenType = "KEYWORD"
-	LITERAL   TokenType = "LITERAL"
-	SEPARATOR TokenType = "SEPARATOR"
+	IDENTIFIER TokenType = "IDENTIFIER"
+	KEYWORD    TokenType = "KEYWORD"
+	LITERAL    TokenType = "LITERAL"
+	SEPARATOR  TokenType = "SEPARATOR"
 )
 
 type Token struct {
@@ -42,7 +43,12 @@ func (t *Tokenizer) Tokenize() []Token {
 				buff.WriteRune(t.consume())
 			}
 
-			tokens = append(tokens, Token{TokenType: KEYWORD, Value: buff.String()})
+			value := buff.String()
+			if isKeyWord(value) {
+				tokens = append(tokens, Token{TokenType: KEYWORD, Value: value})
+			} else {
+				tokens = append(tokens, Token{TokenType: IDENTIFIER, Value: value})
+			}
 			buff.Reset()
 		} else if unicode.IsSpace(t.peek()) {
 			t.consume()

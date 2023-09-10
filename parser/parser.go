@@ -30,7 +30,7 @@ func (p *Parser) Parse() *NodeSalir {
 			}
 
 			node = &NodeSalir{
-				nodeLiteral: nodeLiteral,
+				NodeLiteral: nodeLiteral,
 			}
 		} else if p.isType(tokenizer.SEPARATOR) {
 			p.consume()

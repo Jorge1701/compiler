@@ -29,3 +29,6 @@ go.work
 
 # Test folder
 tests/*
+
+# Output
+./output

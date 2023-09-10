@@ -6,17 +6,17 @@ import (
 )
 
 type NodeLiteral struct {
-	literal tokenizer.Token
+	Literal tokenizer.Token
 }
 
 type NodeSalir struct {
-	nodeLiteral *NodeLiteral
+	NodeLiteral *NodeLiteral
 }
 
 func (p *Parser) parseLiteral() (*NodeLiteral, error) {
 	if p.isType(tokenizer.LITERAL) {
 		return &NodeLiteral{
-			literal: p.consume(),
+			Literal: p.consume(),
 		}, nil
 	} else {
 		return nil, fmt.Errorf("parseLiteral did not found a literal value")

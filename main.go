@@ -2,35 +2,12 @@ package main
 
 import (
 	"bytes"
-	"compiler/keywords"
+	"compiler/generator"
 	"compiler/parser"
 	"compiler/tokenizer"
-	"fmt"
 	"log"
 	"os"
 )
-
-func generateOutput(tokens []tokenizer.Token) []byte {
-	buff := bytes.NewBuffer([]byte{})
-
-	buff.WriteString("global _start\n")
-	buff.WriteString("_start:\n")
-
-	for i := 0; i < len(tokens); i++ {
-		t := tokens[i]
-		if t.TokenType == tokenizer.KEYWORD && keywords.KeyWord(t.Value) == keywords.SALIR {
-			if i+1 < len(tokens) && tokens[i+1].TokenType == tokenizer.LITERAL {
-				if i+2 < len(tokens) && tokens[i+2].TokenType == tokenizer.SEPARATOR && tokens[i+2].Value == ";" {
-					buff.WriteString("    mov rax, 60\n")
-					buff.WriteString(fmt.Sprintf("    mov rdi, %s\n", tokens[i+1].Value))
-					buff.WriteString("    syscall")
-				}
-			}
-		}
-	}
-
-	return buff.Bytes()
-}
 
 func main() {
 	// Read arguments
@@ -50,10 +27,11 @@ func main() {
 
 	// Parse tokens
 	p := parser.NewParser(tokens)
-	p.Parse()
+	node := p.Parse()
 
 	// Generate output
-	output := generateOutput(tokens)
+	g := generator.NewGenerator(node)
+	output := g.Generate()
 
 	// Write asm file
 	err = os.WriteFile("output.asm", output, 0755)

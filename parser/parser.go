@@ -22,11 +22,11 @@ func (p *Parser) Parse() *NodeProg {
 	}
 
 	for p.hasToken() {
-		if p.isType(tokenizer.INT) {
-			if p.match(tokenizer.INT, tokenizer.IDENTIFIER, tokenizer.EQ, tokenizer.LITERAL) {
-				p.consume()
+		if p.matchEqual(tokenizer.INT) {
+			if p.matchSequence(tokenizer.INT, tokenizer.IDENTIFIER, tokenizer.EQ, tokenizer.LITERAL, tokenizer.SEPARATOR) {
+				p.consume() // Ignore INT
 				id := p.consume()
-				p.consume()
+				p.consume() // Ignore EQ
 				lit := p.consume()
 
 				node.Statements = append(node.Statements,
@@ -35,38 +35,57 @@ func (p *Parser) Parse() *NodeProg {
 						Literal:    lit,
 					},
 				)
+
+                p.consume() // Ignore SEPARATOR
 			} else {
-				log.Fatal("Unexpected token after 'int'")
+                log.Fatal("Parser: Unexpected token after 'int'")
 			}
-		} else if p.isType(tokenizer.SALIR) {
-			if p.match(tokenizer.SALIR, tokenizer.LITERAL) {
-				p.consume()
+		} else if p.matchEqual(tokenizer.SALIR) {
+			if p.matchSequence(tokenizer.SALIR, tokenizer.LITERAL, tokenizer.SEPARATOR) {
+				p.consume() // Ignore SALIR
 
 				node.Statements = append(node.Statements,
 					&NodeSalirLiteral{
 						Literal: p.consume(),
 					},
 				)
-			} else if p.match(tokenizer.SALIR, tokenizer.IDENTIFIER) {
-				p.consume()
+                
+                p.consume() // Ignore SEPARATOR
+			} else if p.matchSequence(tokenizer.SALIR, tokenizer.IDENTIFIER, tokenizer.SEPARATOR) {
+				p.consume() // Ignore SALIR
 
 				node.Statements = append(node.Statements,
 					&NodeSalirIdentifier{
 						Identifier: p.consume(),
 					},
 				)
+
+                p.consume() // Ignore SEPARATOR
 			} else {
-				log.Fatal("Error expected literal after 'salir'")
+                log.Fatal("Parser: Error expected literal after 'salir'")
 			}
 		} else {
-			log.Fatal("Error unexpected token", p.tokens[p.index].TokenType, p.tokens[p.index].Value)
+            log.Fatal("Parser: Error unexpected token", p.tokens[p.index].TokenType, p.tokens[p.index].Value)
 		}
 	}
 
 	return node
 }
 
-func (p *Parser) match(tokens ...tokenizer.TokenType) bool {
+func (p *Parser) matchEqual(tokenType tokenizer.TokenType) bool {
+	return p.tokens[p.index].TokenType == tokenType
+}
+
+func (p *Parser) matchAny(tokens ...tokenizer.TokenType) bool {
+    for _, t := range tokens {
+        if p.tokens[p.index].TokenType == t {
+            return true
+        }
+    }
+    return false
+}
+
+func (p *Parser) matchSequence(tokens ...tokenizer.TokenType) bool {
 	for i, t := range tokens {
 		if p.tokens[p.index+i].TokenType != t {
 			return false
@@ -77,14 +96,6 @@ func (p *Parser) match(tokens ...tokenizer.TokenType) bool {
 
 func (p *Parser) hasToken() bool {
 	return p.index < len(p.tokens)
-}
-
-func (p *Parser) isType(tokenType tokenizer.TokenType) bool {
-	return p.tokens[p.index].TokenType == tokenType
-}
-
-func (p *Parser) isValue(value string) bool {
-	return p.tokens[p.index].Value == value
 }
 
 func (p *Parser) consume() tokenizer.Token {

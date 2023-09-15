@@ -12,8 +12,13 @@ const (
 	SALIR      TokenType = "SALIR"
 	INT        TokenType = "INT"
 	EQ         TokenType = "EQ"
+	ADD        TokenType = "ADD"
+	SUB        TokenType = "SUB"
+	MUL        TokenType = "MUL"
+	DIV        TokenType = "DIV"
 	LITERAL    TokenType = "LITERAL"
 	IDENTIFIER TokenType = "IDENTIFIER"
+	SEPARATOR  TokenType = "SEPARATOR"
 )
 
 type Token struct {
@@ -54,6 +59,8 @@ func (t *Tokenizer) Tokenize() []Token {
 				tokens = append(tokens, Token{TokenType: IDENTIFIER, Value: value})
 			}
 			buff.Reset()
+		} else if string(t.peek()) == "\n" {
+			tokens = append(tokens, Token{TokenType: SEPARATOR, Value: string(t.consume())})
 		} else if unicode.IsSpace(t.peek()) {
 			t.consume()
 		} else if unicode.IsNumber(t.peek()) {
@@ -67,8 +74,16 @@ func (t *Tokenizer) Tokenize() []Token {
 			buff.Reset()
 		} else if string(t.peek()) == "=" {
 			tokens = append(tokens, Token{TokenType: EQ, Value: string(t.consume())})
+		} else if string(t.peek()) == "+" {
+			tokens = append(tokens, Token{TokenType: ADD, Value: string(t.consume())})
+		} else if string(t.peek()) == "-" {
+			tokens = append(tokens, Token{TokenType: SUB, Value: string(t.consume())})
+		} else if string(t.peek()) == "*" {
+			tokens = append(tokens, Token{TokenType: MUL, Value: string(t.consume())})
+		} else if string(t.peek()) == "/" {
+			tokens = append(tokens, Token{TokenType: DIV, Value: string(t.consume())})
 		} else {
-			log.Fatalf("Error unexpected token '%s'", string(t.consume()))
+            log.Fatalf("Tokenizer: Error unexpected token '%s'", string(t.consume()))
 		}
 	}
 

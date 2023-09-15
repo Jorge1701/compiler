@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"compiler/keywords"
 	"compiler/tokenizer"
 	"log"
 )
@@ -21,7 +20,7 @@ func (p *Parser) Parse() *NodeSalir {
 	var node *NodeSalir
 
 	for p.hasToken() {
-		if p.isType(tokenizer.KEYWORD) && p.isValue(string(keywords.SALIR)) {
+		if p.isType(tokenizer.SALIR) {
 			p.consume()
 
 			nodeLiteral, err := p.parseLiteral()
@@ -32,8 +31,8 @@ func (p *Parser) Parse() *NodeSalir {
 			node = &NodeSalir{
 				NodeLiteral: nodeLiteral,
 			}
-		} else if p.isType(tokenizer.SEPARATOR) {
-			p.consume()
+		} else {
+            log.Fatal("Error unexpected token", p.tokens[p.index].TokenType, p.tokens[p.index].Value)
 		}
 	}
 

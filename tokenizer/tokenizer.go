@@ -2,17 +2,16 @@ package tokenizer
 
 import (
 	"bytes"
-	"compiler/keywords"
+	"log"
 	"unicode"
 )
 
 type TokenType string
 
 const (
-	IDENTIFIER TokenType = "IDENTIFIER"
-	KEYWORD    TokenType = "KEYWORD"
+	SALIR      TokenType = "SALIR"
 	LITERAL    TokenType = "LITERAL"
-	SEPARATOR  TokenType = "SEPARATOR"
+	IDENTIFIER TokenType = "IDENTIFIER"
 )
 
 type Token struct {
@@ -45,8 +44,8 @@ func (t *Tokenizer) Tokenize() []Token {
 			}
 
 			value := buff.String()
-			if keywords.IsKeyWord(value) {
-				tokens = append(tokens, Token{TokenType: KEYWORD, Value: value})
+			if value == "salir" {
+				tokens = append(tokens, Token{TokenType: SALIR, Value: value})
 			} else {
 				tokens = append(tokens, Token{TokenType: IDENTIFIER, Value: value})
 			}
@@ -63,7 +62,7 @@ func (t *Tokenizer) Tokenize() []Token {
 			tokens = append(tokens, Token{TokenType: LITERAL, Value: buff.String()})
 			buff.Reset()
 		} else {
-			tokens = append(tokens, Token{TokenType: SEPARATOR, Value: string(t.consume())})
+            log.Fatalf("Error unexpected token '%s'", string(t.consume()))
 		}
 	}
 

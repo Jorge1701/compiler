@@ -16,27 +16,63 @@ func NewParser(tokens []tokenizer.Token) *Parser {
 	}
 }
 
-func (p *Parser) Parse() *NodeSalir {
-	var node *NodeSalir
+func (p *Parser) Parse() *NodeProg {
+	node := &NodeProg{
+		Statements: make([]interface{}, 0),
+	}
 
 	for p.hasToken() {
-		if p.isType(tokenizer.SALIR) {
-			p.consume()
+		if p.isType(tokenizer.INT) {
+			if p.match(tokenizer.INT, tokenizer.IDENTIFIER, tokenizer.EQ, tokenizer.LITERAL) {
+				p.consume()
+				id := p.consume()
+				p.consume()
+				lit := p.consume()
 
-			nodeLiteral, err := p.parseLiteral()
-			if err != nil {
-				log.Fatal("Invalid expression:", err)
+				node.Statements = append(node.Statements,
+					&NodeInitialize{
+						Identifier: id,
+						Literal:    lit,
+					},
+				)
+			} else {
+				log.Fatal("Unexpected token after 'int'")
 			}
+		} else if p.isType(tokenizer.SALIR) {
+			if p.match(tokenizer.SALIR, tokenizer.LITERAL) {
+				p.consume()
 
-			node = &NodeSalir{
-				NodeLiteral: nodeLiteral,
+				node.Statements = append(node.Statements,
+					&NodeSalirLiteral{
+						Literal: p.consume(),
+					},
+				)
+			} else if p.match(tokenizer.SALIR, tokenizer.IDENTIFIER) {
+				p.consume()
+
+				node.Statements = append(node.Statements,
+					&NodeSalirIdentifier{
+						Identifier: p.consume(),
+					},
+				)
+			} else {
+				log.Fatal("Error expected literal after 'salir'")
 			}
 		} else {
-            log.Fatal("Error unexpected token", p.tokens[p.index].TokenType, p.tokens[p.index].Value)
+			log.Fatal("Error unexpected token", p.tokens[p.index].TokenType, p.tokens[p.index].Value)
 		}
 	}
 
 	return node
+}
+
+func (p *Parser) match(tokens ...tokenizer.TokenType) bool {
+	for i, t := range tokens {
+		if p.tokens[p.index+i].TokenType != t {
+			return false
+		}
+	}
+	return true
 }
 
 func (p *Parser) hasToken() bool {

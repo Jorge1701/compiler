@@ -10,6 +10,8 @@ type TokenType string
 
 const (
 	SALIR      TokenType = "SALIR"
+	INT        TokenType = "INT"
+	EQ         TokenType = "EQ"
 	LITERAL    TokenType = "LITERAL"
 	IDENTIFIER TokenType = "IDENTIFIER"
 )
@@ -46,6 +48,8 @@ func (t *Tokenizer) Tokenize() []Token {
 			value := buff.String()
 			if value == "salir" {
 				tokens = append(tokens, Token{TokenType: SALIR, Value: value})
+			} else if value == "int" {
+				tokens = append(tokens, Token{TokenType: INT, Value: value})
 			} else {
 				tokens = append(tokens, Token{TokenType: IDENTIFIER, Value: value})
 			}
@@ -61,8 +65,10 @@ func (t *Tokenizer) Tokenize() []Token {
 
 			tokens = append(tokens, Token{TokenType: LITERAL, Value: buff.String()})
 			buff.Reset()
+		} else if string(t.peek()) == "=" {
+			tokens = append(tokens, Token{TokenType: EQ, Value: string(t.consume())})
 		} else {
-            log.Fatalf("Error unexpected token '%s'", string(t.consume()))
+			log.Fatalf("Error unexpected token '%s'", string(t.consume()))
 		}
 	}
 

@@ -26,13 +26,13 @@ For now you can only initialize variables of type `int` and return that as the e
 
 ```
 int num = 420
-salir num
+exit num
 ```
 
 Or simply return some value like this:
 
 ```
-salir 69
+exit 69
 ```
 
 Will expand when new things get added.
@@ -40,8 +40,6 @@ Will expand when new things get added.
 # How does it work?
 
 ## Tokenizer
-`[Refactoring...]`
-
 The tokenizer reads a sequence of runes that contains the source code and returns a list of tokens.
 
 This does not check for gramatical errors like a missing closing parentheses, it just returns the list.
@@ -79,7 +77,7 @@ This does not check for gramatical errors like a missing closing parentheses, it
 |LITERAL|`[0-9]+`|Represents literal numbers
 
 ## Parser
-Takes a list of tokens and generates an abstract syntax tree ([AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)), which represents the syntactic structure of the source code.
+Takes a list of tokens and generates an abstract syntax tree (AST), which represents the syntactic structure of the source code.
 
 This process drops separators as they are only needed to delimit different parts of the code but do not need to be saved in the AST, since these limits would be implied by the structure itself.
 
@@ -90,3 +88,11 @@ Some nodes of the tree do refer to values from the tokens. For example a node of
 ## Generator
 
 `[To be refactored]`
+
+### References
+- This project is inspired by [Pixeled](https://www.youtube.com/playlist?list=PLUDlas_Zy_qC7c5tCgTMYq2idyyT241qs)
+- [Syscalls table for reference.](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86-32_bit)
+- Some learning resources:
+    - [x86 Assembly with NASM](https://www.youtube.com/playlist?list=PL2EF13wm-hWCoj6tUBGUmrkJmH1972dBB)
+    - [Lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis)
+    - [Abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)

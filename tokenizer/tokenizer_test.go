@@ -18,6 +18,7 @@ const (
 var exampleFiles = []string{
 	"exit_literal.tbd",
 	"exit_variable.tbd",
+	"operations.tbd",
 }
 
 func TestGenerateTokens(t *testing.T) {

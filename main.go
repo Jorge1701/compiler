@@ -2,9 +2,8 @@ package main
 
 import (
 	"bytes"
-	"compiler/generator"
-	"compiler/parser"
 	"compiler/tokenizer"
+	"fmt"
 	"log"
 	"os"
 )
@@ -23,19 +22,10 @@ func main() {
 
 	// Tokenize the input
 	t := tokenizer.NewTokenizer(bytes.Runes(bs))
-	tokens := t.Tokenize()
+	tokens := t.GenerateTokens()
 
-	// Parse tokens
-	p := parser.NewParser(tokens)
-	node := p.Parse()
-
-	// Generate output
-	g := generator.NewGenerator(node)
-	output := g.Generate()
-
-	// Write asm file
-	err = os.WriteFile("output.asm", output, 0755)
-	if err != nil {
-		log.Fatal(err)
+	// Print tokens
+	for _, t := range tokens {
+        fmt.Println(t.String())
 	}
 }

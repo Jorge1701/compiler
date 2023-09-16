@@ -4,6 +4,28 @@ import (
 	"compiler/tokenizer"
 )
 
+type NodeExprLiteral struct {
+	Literal *tokenizer.Token
+}
+
+type NodeExprIdentifier struct {
+	Identifier *tokenizer.Token
+}
+
+type NodeExprOperation[nodeExpr NodeExpr] struct {
+	LeftExpr  nodeExpr
+	Operator  *tokenizer.Token
+	RightExpr nodeExpr
+}
+
+type NodeExpr interface {
+	NodeExprLiteral | NodeExprIdentifier
+}
+
+type NodeExit[T NodeExpr] struct {
+	Expr T
+}
+
 type Parser struct {
 	tokens []tokenizer.Token
 	index  int

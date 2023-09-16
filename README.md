@@ -85,6 +85,58 @@ This process drops separators as they are only needed to delimit different parts
 
 Some nodes of the tree do refer to values from the tokens. For example a node of the tree that represents assignment might want to save the type to be assigned, the name of the variable to create and the value, which in turn might be a node of an expresion that represents addition, since you could assign the result of a sum to the variable instead of a literal.
 
+### Grammar
+This is my attempt to specify the grammar that the parser is going to be creating nodes for.
+
+|Name|Definition|
+|-|-|
+|`Operator`|Represents all the operations that can be done.|
+|`Type`|Represents all the types available.|
+|`Expr`|Represents all portions of code that resolve into a value.|
+|`Stms`|Represents all posible sentences.|
+
+$$
+\begin{aligned}
+    \boxed{Operator}
+    &\Rightarrow
+    \begin{cases}
+        \text{ADD}
+        \\
+        \text{SUB}
+        \\
+        \text{MUL}
+        \\
+        \text{DIV}
+    \end{cases}
+    \\\\
+    \boxed{Type}
+    &\Rightarrow
+    \begin{cases}
+        \text{INT}
+    \end{cases}
+    \\\\
+    \boxed{Expr}
+    &\Rightarrow
+    \begin{cases}
+        \text{LITERAL}
+        \\
+        \text{IDENTIFIER}
+        \\
+        \boxed{Expr}\boxed{Operator} \boxed{Expr}
+    \end{cases}
+    \\\\
+    \boxed{Stmt}
+    &\Rightarrow
+    \begin{cases}
+        \text{EXIT }\boxed{Expr}
+        \\
+        \boxed{Type}\text{ IDENTIFIER EQ }\boxed{Expr}
+        \\
+        \text{IDENTIFIER EQ }\boxed{Expr}
+    \end{cases}
+\end{aligned}
+$$
+
 ## Generator
 
 `[To be refactored]`

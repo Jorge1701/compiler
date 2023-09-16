@@ -77,19 +77,19 @@ This does not check for gramatical errors like a missing closing parentheses, it
 |LITERAL|`[0-9]+`|Represents literal numbers
 
 ## Parser
+`[To be refactored]`
+
 Takes a list of tokens and generates an abstract syntax tree (AST), which represents the syntactic structure of the source code.
 
 This process drops separators as they are only needed to delimit different parts of the code but do not need to be saved in the AST, since these limits would be implied by the structure itself.
 
 Some nodes of the tree do refer to values from the tokens. For example a node of the tree that represents assignment might want to save the type to be assigned, the name of the variable to create and the value, which in turn might be a node of an expresion that represents addition, since you could assign the result of a sum to the variable instead of a literal.
 
-`[To be refactored]`
-
 ## Generator
 
 `[To be refactored]`
 
-### References
+# References
 - This project is inspired by [Pixeled](https://www.youtube.com/playlist?list=PLUDlas_Zy_qC7c5tCgTMYq2idyyT241qs)
 - [Syscalls table for reference.](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86-32_bit)
 - Some learning resources:

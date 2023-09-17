@@ -3,7 +3,6 @@ package parser
 import (
 	"compiler/tokenizer"
 	"fmt"
-	"log"
 )
 
 const (

@@ -28,7 +28,7 @@ func (g *Generator) Generate() []byte {
 	textBuff.WriteString("_start:\n")
 
 	for _, s := range g.nodeProg.Stmts {
-		fmt.Println(s)
+		fmt.Println(s) // Refactoring...
 	}
 
 	dataBuff.WriteString("\n")

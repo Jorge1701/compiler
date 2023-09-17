@@ -86,53 +86,36 @@ This process drops separators as they are only needed to delimit different parts
 Some nodes of the tree do refer to values from the tokens. For example a node of the tree that represents assignment might want to save the type to be assigned, the name of the variable to create and the value, which in turn might be a node of an expresion that represents addition, since you could assign the result of a sum to the variable instead of a literal.
 
 ### Grammar
-This is my attempt to specify the grammar that the parser is going to be creating nodes for.
-
-|Name|Definition|
-|-|-|
-|`Operator`|Represents all the operations that can be done.|
-|`Type`|Represents all the types available.|
-|`Expr`|Represents all portions of code that resolve into a value.|
-|`Stms`|Represents all posible sentences.|
-
 $$
 \begin{aligned}
-    \boxed{Operator}
-    &\Rightarrow
+    [\text{Program}]&\to            % [Program]
+    [\text{Statement}]^*
+    \\
+    [\text{Expresion}]&\to          % [Expresion]
     \begin{cases}
-        \text{ADD}
+        \it{literal}
         \\
-        \text{SUB}
+        \it{identifier}
         \\
-        \text{MUL}
-        \\
-        \text{DIV}
+        [\text{Operation}]
     \end{cases}
-    \\\\
-    \boxed{Type}
-    &\Rightarrow
+    \\
+    [\text{Operation}]&\to          % [Operation]
     \begin{cases}
-        \text{INT}
+        [\text{Expresion}]\space\text{+}\space[\text{Expresion}]
+        \\
+        [\text{Expresion}]\space\text{-}\space[\text{Expresion}]
+        \\
+        [\text{Expresion}]\space\text{*}\space[\text{Expresion}]
+        \\
+        [\text{Expresion}]\space\text{/}\space[\text{Expresion}]
     \end{cases}
-    \\\\
-    \boxed{Expr}
-    &\Rightarrow
+    \\
+    [\text{Statement}]&\to          % [Statement]
     \begin{cases}
-        \text{LITERAL}
+        \text{int}\space\it{identifier}\space\text{=}\space[\text{Expresion}]
         \\
-        \text{IDENTIFIER}
-        \\
-        \boxed{Expr}\boxed{Operator} \boxed{Expr}
-    \end{cases}
-    \\\\
-    \boxed{Stmt}
-    &\Rightarrow
-    \begin{cases}
-        \text{EXIT }\boxed{Expr}
-        \\
-        \boxed{Type}\text{ IDENTIFIER EQ }\boxed{Expr}
-        \\
-        \text{IDENTIFIER EQ }\boxed{Expr}
+        \text{exit}\space[\text{Expresion}]
     \end{cases}
 \end{aligned}
 $$

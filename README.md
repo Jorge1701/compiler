@@ -91,13 +91,25 @@ $$
     [\text{Program}]&\to            % [Program]
     [\text{Statement}]^*
     \\
+    [\text{Statement}]&\to          % [Statement]
+    \begin{cases}
+        \text{int}\space\it{identifier}\space\text{=}\space[\text{Expresion}]
+        \\
+        \text{exit}\space[\text{Expresion}]
+    \end{cases}
+    \\
     [\text{Expresion}]&\to          % [Expresion]
+    \begin{cases}
+        [\text{Term}]
+        \\
+        [\text{Operation}]
+    \end{cases}
+    \\
+    [\text{Term}]&\to               % [Term]
     \begin{cases}
         \it{literal}
         \\
         \it{identifier}
-        \\
-        [\text{Operation}]
     \end{cases}
     \\
     [\text{Operation}]&\to          % [Operation]
@@ -109,13 +121,6 @@ $$
         [\text{Expresion}]\space\text{*}\space[\text{Expresion}]
         \\
         [\text{Expresion}]\space\text{/}\space[\text{Expresion}]
-    \end{cases}
-    \\
-    [\text{Statement}]&\to          % [Statement]
-    \begin{cases}
-        \text{int}\space\it{identifier}\space\text{=}\space[\text{Expresion}]
-        \\
-        \text{exit}\space[\text{Expresion}]
     \end{cases}
 \end{aligned}
 $$

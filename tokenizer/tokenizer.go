@@ -51,6 +51,18 @@ var listOfKeywords = map[string]TokenType{
 	"exit": EXIT,
 }
 
+var termTokens = []TokenType{
+	LITERAL,
+	IDENTIFIER,
+}
+
+var operatorTokens = []TokenType{
+	ADD,
+	SUB,
+	MUL,
+	DIV,
+}
+
 type Token struct {
 	Type  TokenType
 	Value string
@@ -150,32 +162,27 @@ func (t *Tokenizer) consume() rune {
 }
 
 func (t *Token) IsTerm() bool {
-	switch t.Type {
-	case LITERAL:
-	case IDENTIFIER:
-		return true
+	for _, tt := range termTokens {
+		if tt == t.Type {
+			return true
+		}
 	}
 	return false
 }
 
 func (t *Token) IsOperator() bool {
-	switch t.Type {
-	case ADD:
-	case SUB:
-	case MUL:
-	case DIV:
-		return true
+	for _, ot := range operatorTokens {
+		if ot == t.Type {
+			return true
+		}
 	}
 	return false
 }
 
 func (t *Token) GetPrec() int {
-	switch t.Type {
-	case ADD:
-	case SUB:
+	if t.Type == "ADD" || t.Type == "SUB" {
 		return 1
-	case MUL:
-	case DIV:
+	} else if t.Type == "MUL" || t.Type == "DIV" {
 		return 2
 	}
 	return 0

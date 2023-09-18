@@ -3,6 +3,7 @@ package parser
 import (
 	"compiler/tokenizer"
 	"fmt"
+	"strings"
 )
 
 const (
@@ -63,6 +64,12 @@ type Parser struct {
 	index  int
 }
 
+func NewParser(tokens []tokenizer.Token) *Parser {
+	return &Parser{
+		tokens: tokens,
+	}
+}
+
 func (p *Parser) GenerateNodes() (*NodeProg, error) {
 	nodeProg := &NodeProg{
 		Stmts: []NodeStmt{},
@@ -72,19 +79,19 @@ func (p *Parser) GenerateNodes() (*NodeProg, error) {
 		if p.match(tokenizer.INT) {
 			node, err := p.parseNodeStmtInit()
 			if err != nil {
-				return &NodeProg{}, err
+				return nodeProg, err
 			}
 			nodeProg.Stmts = append(nodeProg.Stmts, node)
 		} else if p.match(tokenizer.EXIT) {
 			node, err := p.parseNodeStmtExit()
 			if err != nil {
-				return &NodeProg{}, err
+				return nodeProg, err
 			}
 			nodeProg.Stmts = append(nodeProg.Stmts, node)
 		} else if p.match(tokenizer.SEP) {
 			p.consume()
 		} else {
-			return &NodeProg{}, fmt.Errorf("Error in parsing, cannot parse token '%s'", p.peek().String())
+			return nodeProg, fmt.Errorf("Error in parsing, cannot parse token '%s'", p.peek().String())
 		}
 	}
 	return nodeProg, nil
@@ -96,7 +103,7 @@ func (p *Parser) parseNodeStmtInit() (NodeStmt, error) {
 		ident := p.consume()
 		p.consume()
 
-		expr, err := p.parseNodeExpr(100) // TODO minPrec
+		expr, err := p.parseNodeExpr(0)
 		if err != nil {
 			return NodeStmt{}, err
 		}
@@ -114,7 +121,7 @@ func (p *Parser) parseNodeStmtInit() (NodeStmt, error) {
 func (p *Parser) parseNodeStmtExit() (NodeStmt, error) {
 	if p.match(tokenizer.EXIT) {
 		p.consume()
-		expr, err := p.parseNodeExpr(100) // TODO minPrec
+		expr, err := p.parseNodeExpr(0)
 		if err != nil {
 			return NodeStmt{}, err
 		}
@@ -140,11 +147,11 @@ func (p *Parser) parseNodeTerm() (NodeTerm, error) {
 			Ident: p.consume(),
 		}, nil
 	}
-	return NodeTerm{}, fmt.Errorf("Non valid term")
+	return NodeTerm{}, fmt.Errorf("Non valid term '%s'", p.peek().String())
 }
 
 func (p *Parser) parseNodeExpr(minPrec int) (NodeExpr, error) {
-	if p.hasTokens(3) && p.peekAt(2).IsOperator() {
+	if p.hasTokens(3) && p.peekAt(1).IsOperator() {
 		oper, err := p.parseNodeOper(minPrec)
 		if err != nil {
 			return NodeExpr{}, err
@@ -212,12 +219,12 @@ func (p *Parser) peek() *tokenizer.Token {
 }
 
 func (p *Parser) peekAt(offSet int) *tokenizer.Token {
-	return &p.tokens[p.index+offSet-1]
+	return &p.tokens[p.index+offSet]
 }
 
 func (p *Parser) match(tokenTypes ...tokenizer.TokenType) bool {
 	for i, tt := range tokenTypes {
-		if i > len(p.tokens) || p.tokens[i].Type != tt {
+		if p.index+i > len(p.tokens) || p.tokens[p.index+i].Type != tt {
 			return false
 		}
 	}
@@ -237,4 +244,55 @@ func (p *Parser) consume() *tokenizer.Token {
 	t := p.tokens[p.index]
 	p.index++
 	return &t
+}
+
+func (n NodeProg) Print() {
+	fmt.Println("+ NodeProg")
+	for _, stmt := range n.Stmts {
+		fmt.Printf("|")
+		stmt.Print(0)
+	}
+}
+
+func (stmt NodeStmt) Print(offset int) {
+	switch stmt.t {
+	case NodeTypeStmtInit:
+		fmt.Printf("- NodeTypeStmtInit {Ident: '%s'}\n", stmt.Init.Ident.Value)
+		stmt.Init.Expr.Print(offset + 1)
+	case NodeTypeStmtExit:
+		fmt.Printf("- NodeTypeStmtExit\n")
+		stmt.Exit.Expr.Print(offset + 1)
+	default:
+		fmt.Println("NOT IMPLEMENTED NodeStmt.Print")
+	}
+}
+
+func (expr NodeExpr) Print(offset int) {
+	switch expr.t {
+	case NodeTypeExprTerm:
+		expr.Term.Print(offset + 1)
+	case NodeTypeExprOper:
+		expr.Oper.Print(offset + 1)
+	default:
+		fmt.Println("NOT IMPLEMENTED NodeExpr.Print")
+	}
+}
+
+func (term NodeTerm) Print(offset int) {
+	fmt.Printf("|%s- ", strings.Repeat(" ", offset))
+	switch term.t {
+	case NodeTypeTermLit:
+		fmt.Printf("NodeTypeTermLit {Lit: '%s'}\n", term.Lit.Value)
+	case NodeTypeTermIdent:
+		fmt.Printf("NodeTypeTermIdent {Ident: '%s'}\n", term.Ident.Value)
+	default:
+		fmt.Println("NOT IMPLEMENTED NodeTerm.Print")
+	}
+}
+
+func (oper NodeOper) Print(offset int) {
+	fmt.Printf("|%s- ", strings.Repeat(" ", offset))
+	fmt.Printf("NodeOper {Oper: '%s'}\n", oper.Oper.Value)
+	oper.Lhs.Print(offset + 1)
+	oper.Rhs.Print(offset + 1)
 }

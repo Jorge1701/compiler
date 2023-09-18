@@ -149,6 +149,38 @@ func (t *Tokenizer) consume() rune {
 	return r
 }
 
+func (t *Token) IsTerm() bool {
+	switch t.Type {
+	case LITERAL:
+	case IDENTIFIER:
+		return true
+	}
+	return false
+}
+
+func (t *Token) IsOperator() bool {
+	switch t.Type {
+	case ADD:
+	case SUB:
+	case MUL:
+	case DIV:
+		return true
+	}
+	return false
+}
+
+func (t *Token) GetPrec() int {
+	switch t.Type {
+	case ADD:
+	case SUB:
+		return 1
+	case MUL:
+	case DIV:
+		return 2
+	}
+	return 0
+}
+
 // String returns a printable string that represents the token
 func (t *Token) String() string {
 	if t.Type == SEP {

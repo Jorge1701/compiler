@@ -103,7 +103,7 @@ func (p *Parser) parseNodeStmtInit() (NodeStmt, error) {
 		ident := p.consume()
 		p.consume()
 
-		expr, err := p.parseNodeExpr(0)
+		expr, err := p.parseNodeExpr(1)
 		if err != nil {
 			return NodeStmt{}, err
 		}
@@ -121,7 +121,7 @@ func (p *Parser) parseNodeStmtInit() (NodeStmt, error) {
 func (p *Parser) parseNodeStmtExit() (NodeStmt, error) {
 	if p.match(tokenizer.EXIT) {
 		p.consume()
-		expr, err := p.parseNodeExpr(0)
+		expr, err := p.parseNodeExpr(1)
 		if err != nil {
 			return NodeStmt{}, err
 		}
@@ -152,14 +152,11 @@ func (p *Parser) parseNodeTerm() (NodeTerm, error) {
 
 func (p *Parser) parseNodeExpr(minPrec int) (NodeExpr, error) {
 	if p.hasTokens(3) && p.peekAt(1).IsOperator() {
-		oper, err := p.parseNodeOper(minPrec)
+		oper, err := p.parseNodeExprOper(minPrec)
 		if err != nil {
 			return NodeExpr{}, err
 		}
-		return NodeExpr{
-			t:    NodeTypeExprOper,
-			Oper: &oper,
-		}, nil
+		return oper, nil
 	} else if p.hasToken() && p.matchAny(tokenizer.LITERAL, tokenizer.IDENTIFIER) {
 		term, err := p.parseNodeTerm()
 		if err != nil {
@@ -174,36 +171,38 @@ func (p *Parser) parseNodeExpr(minPrec int) (NodeExpr, error) {
 	return NodeExpr{}, fmt.Errorf("Error parsing expresion")
 }
 
-func (p *Parser) parseNodeOper(minPrec int) (NodeOper, error) {
+func (p *Parser) parseNodeExprOper(minPrec int) (NodeExpr, error) {
 	term, err := p.parseNodeTerm()
 	if err != nil {
-		return NodeOper{}, err
+		return NodeExpr{}, err
 	}
 
-	lhs := NodeExpr{
+	expr := NodeExpr{
 		t:    NodeTypeExprTerm,
 		Term: &term,
 	}
 
-	var rhs NodeExpr
-	var oper *tokenizer.Token
 	for {
 		if !p.hasToken() || !p.peek().IsOperator() || p.peek().GetPrec() < minPrec {
 			break
 		}
 
-		oper = p.consume()
+		oper := p.consume()
 
-		rhs, err = p.parseNodeExpr(oper.GetPrec() + 1)
+		rhs, err := p.parseNodeExpr(oper.GetPrec())
 		if err != nil {
-			return NodeOper{}, err
+			return NodeExpr{}, err
 		}
+		lhs := expr
+		expr = NodeExpr{
+			t: NodeTypeExprOper,
+			Oper: &NodeOper{
+				Oper: oper,
+				Lhs:  &lhs,
+				Rhs:  &rhs,
+			}}
 	}
-	return NodeOper{
-		Oper: oper,
-		Lhs:  &lhs,
-		Rhs:  &rhs,
-	}, nil
+	return expr, nil
 }
 
 func (p *Parser) hasToken() bool {

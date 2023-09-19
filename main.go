@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"compiler/parser"
 	"compiler/tokenizer"
 	"fmt"
 	"log"
@@ -25,7 +26,18 @@ func main() {
 	tokens := t.GenerateTokens()
 
 	// Print tokens
+	fmt.Println("=== Tokens === ")
 	for _, t := range tokens {
-        fmt.Println(t.String())
+		fmt.Println(t.String())
 	}
+
+	p := parser.NewParser(tokens)
+	nodeProg, err := p.GenerateNodes()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Print parse tree
+	fmt.Println("=== Parse tree === ")
+	nodeProg.Print()
 }

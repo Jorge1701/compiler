@@ -85,6 +85,46 @@ This process drops separators as they are only needed to delimit different parts
 
 Some nodes of the tree do refer to values from the tokens. For example a node of the tree that represents assignment might want to save the type to be assigned, the name of the variable to create and the value, which in turn might be a node of an expresion that represents addition, since you could assign the result of a sum to the variable instead of a literal.
 
+### Grammar
+$$
+\begin{aligned}
+    [\text{Program}]&\to            % [Program]
+    [\text{Statement}]^*
+    \\
+    [\text{Statement}]&\to          % [Statement]
+    \begin{cases}
+        \text{int}\space\it{identifier}\space\text{=}\space[\text{Expresion}]
+        \\
+        \text{exit}\space[\text{Expresion}]
+    \end{cases}
+    \\
+    [\text{Expresion}]&\to          % [Expresion]
+    \begin{cases}
+        [\text{Term}]
+        \\
+        [\text{Operation}]
+    \end{cases}
+    \\
+    [\text{Term}]&\to               % [Term]
+    \begin{cases}
+        \it{literal}
+        \\
+        \it{identifier}
+    \end{cases}
+    \\
+    [\text{Operation}]&\to          % [Operation]
+    \begin{cases}
+        [\text{Expresion}]\space\text{+}\space[\text{Expresion}]
+        \\
+        [\text{Expresion}]\space\text{-}\space[\text{Expresion}]
+        \\
+        [\text{Expresion}]\space\text{*}\space[\text{Expresion}]
+        \\
+        [\text{Expresion}]\space\text{/}\space[\text{Expresion}]
+    \end{cases}
+\end{aligned}
+$$
+
 ## Generator
 
 `[To be refactored]`

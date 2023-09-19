@@ -49,7 +49,7 @@ func (p *Parser) hasToken() bool {
 	return p.index < len(p.tokens)
 }
 
-// hasTokens returns true if the is still 'amt' tokens left
+// hasTokens returns true if there is still an 'amt' of tokens left
 func (p *Parser) hasTokens(amt int) bool {
 	return p.index+amt < len(p.tokens)
 }
@@ -59,7 +59,7 @@ func (p *Parser) peek() *tokenizer.Token {
 	return &p.tokens[p.index]
 }
 
-// peekAhead returns the token at given position ahead of current without changing the index
+// peekAhead returns the token at a given position ahead of the current token without changing the index
 func (p *Parser) peekAhead(offSet int) *tokenizer.Token {
 	return &p.tokens[p.index+offSet]
 }

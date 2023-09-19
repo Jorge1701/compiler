@@ -17,7 +17,7 @@ type NodeExpr struct {
 }
 
 func (p *Parser) parseNodeExpr(minPrec int) (NodeExpr, error) {
-	if p.hasTokens(3) && p.peekAt(1).IsOperator() {
+	if p.hasTokens(3) && p.peekAhead(1).IsOperator() {
 		oper, err := p.parseNodeExprOper(minPrec)
 		if err != nil {
 			return NodeExpr{}, err

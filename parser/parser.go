@@ -51,11 +51,13 @@ func (p *Parser) hasTokens(amt int) bool {
 	return p.index+amt < len(p.tokens)
 }
 
+// peek returns the current token without changing the index
 func (p *Parser) peek() *tokenizer.Token {
 	return &p.tokens[p.index]
 }
 
-func (p *Parser) peekAt(offSet int) *tokenizer.Token {
+// peekAhead returns the token at given position ahead of current without changing the index
+func (p *Parser) peekAhead(offSet int) *tokenizer.Token {
 	return &p.tokens[p.index+offSet]
 }
 

@@ -17,16 +17,21 @@ type NodeTerm struct {
 }
 
 func (p *Parser) parseNodeTerm() (NodeTerm, error) {
-	if p.match(tokenizer.LITERAL) {
+	if p.hasToken() && p.peek().IsType(tokenizer.LITERAL) {
 		return NodeTerm{
 			t:   TypeNodeTermLit,
 			Lit: p.consume(),
 		}, nil
-	} else if p.match(tokenizer.IDENTIFIER) {
+	} else if p.hasToken() && p.peek().IsType(tokenizer.IDENTIFIER) {
 		return NodeTerm{
 			t:     TypeNodeTermIdent,
 			Ident: p.consume(),
 		}, nil
 	}
-	return NodeTerm{}, fmt.Errorf("Non valid term '%s'", p.peek().String())
+
+	if p.hasToken() {
+		return NodeTerm{}, fmt.Errorf("No tokens left")
+	} else {
+		return NodeTerm{}, fmt.Errorf("Non valid term '%s'", p.peek().String())
+	}
 }

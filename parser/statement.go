@@ -26,7 +26,7 @@ type NodeStmtExit struct {
 }
 
 func (p *Parser) parseNodeStmtInit() (NodeStmt, error) {
-	if p.match(tokenizer.INT, tokenizer.IDENTIFIER, tokenizer.EQ) {
+	if p.matchSeq(tokenizer.INT, tokenizer.IDENTIFIER, tokenizer.EQ) {
 		p.consume()
 		ident := p.consume()
 		p.consume()
@@ -47,7 +47,7 @@ func (p *Parser) parseNodeStmtInit() (NodeStmt, error) {
 }
 
 func (p *Parser) parseNodeStmtExit() (NodeStmt, error) {
-	if p.match(tokenizer.EXIT) {
+	if p.peek().IsType(tokenizer.EXIT) {
 		p.consume()
 		expr, err := p.parseNodeExpr(1)
 		if err != nil {

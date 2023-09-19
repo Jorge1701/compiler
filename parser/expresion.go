@@ -23,7 +23,7 @@ func (p *Parser) parseNodeExpr(minPrec int) (NodeExpr, error) {
 			return NodeExpr{}, err
 		}
 		return oper, nil
-	} else if p.hasToken() && p.matchAny(tokenizer.LITERAL, tokenizer.IDENTIFIER) {
+	} else if p.hasToken() && p.peek().MatchAny(tokenizer.LITERAL, tokenizer.IDENTIFIER) {
 		term, err := p.parseNodeTerm()
 		if err != nil {
 			return NodeExpr{}, err

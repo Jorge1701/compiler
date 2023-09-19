@@ -7,6 +7,21 @@ type Token struct {
 	Value string
 }
 
+// MatchAny returns true if the type of the token matches any of the given types
+func (t *Token) MatchAny(tokenTypes ...TokenType) bool {
+	for _, tt := range tokenTypes {
+		if t.Type == tt {
+			return true
+		}
+	}
+	return false
+}
+
+// IsType returns true if the token is of the given type
+func (t *Token) IsType(tokenType TokenType) bool {
+	return t.Type == tokenType
+}
+
 // IsTerm returns true if the token can be a term in an operation
 func (t *Token) IsTerm() bool {
 	if t.MatchAny(LITERAL, IDENTIFIER) {
@@ -33,16 +48,6 @@ func (t *Token) GetPrec() int {
 	default:
 		return 0
 	}
-}
-
-// MatchAny returns true if the type of the token matches any of the given types
-func (t *Token) MatchAny(tokenTypes ...TokenType) bool {
-	for _, tt := range tokenTypes {
-		if t.Type == tt {
-			return true
-		}
-	}
-	return false
 }
 
 // String returns a printable string that represents the token

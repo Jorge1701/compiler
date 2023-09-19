@@ -16,25 +16,26 @@ func NewParser(tokens []tokenizer.Token) *Parser {
 	}
 }
 
+// GenerateNodes parses the list of tokens and returns a parse tree
 func (p *Parser) GenerateNodes() (*NodeProg, error) {
 	nodeProg := &NodeProg{
 		Stmts: []NodeStmt{},
 	}
 
 	for p.hasToken() {
-		if p.match(tokenizer.INT) {
+		if p.peek().IsType(tokenizer.INT) {
 			node, err := p.parseNodeStmtInit()
 			if err != nil {
 				return nodeProg, err
 			}
 			nodeProg.Stmts = append(nodeProg.Stmts, node)
-		} else if p.match(tokenizer.EXIT) {
+		} else if p.peek().IsType(tokenizer.EXIT) {
 			node, err := p.parseNodeStmtExit()
 			if err != nil {
 				return nodeProg, err
 			}
 			nodeProg.Stmts = append(nodeProg.Stmts, node)
-		} else if p.match(tokenizer.SEP) {
+		} else if p.peek().IsType(tokenizer.SEP) {
 			p.consume()
 		} else {
 			return nodeProg, fmt.Errorf("Error in parsing, cannot parse token '%s'", p.peek().String())
@@ -43,10 +44,12 @@ func (p *Parser) GenerateNodes() (*NodeProg, error) {
 	return nodeProg, nil
 }
 
+// hasToken returns true if the is a next token
 func (p *Parser) hasToken() bool {
 	return p.index < len(p.tokens)
 }
 
+// hasTokens returns true if the is still 'amt' tokens left
 func (p *Parser) hasTokens(amt int) bool {
 	return p.index+amt < len(p.tokens)
 }
@@ -61,7 +64,8 @@ func (p *Parser) peekAhead(offSet int) *tokenizer.Token {
 	return &p.tokens[p.index+offSet]
 }
 
-func (p *Parser) match(tokenTypes ...tokenizer.TokenType) bool {
+// matchSeq returns true if the next n tokens match the given types in order
+func (p *Parser) matchSeq(tokenTypes ...tokenizer.TokenType) bool {
 	for i, tt := range tokenTypes {
 		if p.index+i > len(p.tokens) || p.tokens[p.index+i].Type != tt {
 			return false
@@ -70,15 +74,7 @@ func (p *Parser) match(tokenTypes ...tokenizer.TokenType) bool {
 	return true
 }
 
-func (p *Parser) matchAny(tokenTypes ...tokenizer.TokenType) bool {
-	for _, tt := range tokenTypes {
-		if p.tokens[p.index].Type == tt {
-			return true
-		}
-	}
-	return false
-}
-
+// consume returns the current token and increases the index so that the next operations handle the next token
 func (p *Parser) consume() *tokenizer.Token {
 	t := p.tokens[p.index]
 	p.index++

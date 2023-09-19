@@ -2,71 +2,8 @@ package tokenizer
 
 import (
 	"bytes"
-	"fmt"
 	"unicode"
 )
-
-type TokenType string
-
-const (
-	SEP  TokenType = "SEP"
-	P_L  TokenType = "P_L"
-	P_R  TokenType = "P_R"
-	B_L  TokenType = "B_L"
-	B_R  TokenType = "B_R"
-	SB_L TokenType = "SB_L"
-	SB_R TokenType = "SB_R"
-
-	ADD TokenType = "ADD"
-	SUB TokenType = "SUB"
-	MUL TokenType = "MUL"
-	DIV TokenType = "DIV"
-
-	EQ TokenType = "EQ"
-
-	INT  TokenType = "INT"
-	EXIT TokenType = "EXIT"
-
-	IDENTIFIER TokenType = "IDENTIFIER"
-	LITERAL    TokenType = "LITERAL"
-)
-
-var singleRuneTokens = map[rune]TokenType{
-	'\n': SEP,
-	'(':  P_L,
-	')':  P_R,
-	'{':  B_L,
-	'}':  B_R,
-	'[':  SB_L,
-	']':  SB_R,
-	'+':  ADD,
-	'-':  SUB,
-	'*':  MUL,
-	'/':  DIV,
-	'=':  EQ,
-}
-
-var listOfKeywords = map[string]TokenType{
-	"int":  INT,
-	"exit": EXIT,
-}
-
-var termTokens = []TokenType{
-	LITERAL,
-	IDENTIFIER,
-}
-
-var operatorTokens = []TokenType{
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-}
-
-type Token struct {
-	Type  TokenType
-	Value string
-}
 
 type Tokenizer struct {
 	runes []rune
@@ -159,40 +96,4 @@ func (t *Tokenizer) consume() rune {
 	r := t.peek()
 	t.index++
 	return r
-}
-
-func (t *Token) IsTerm() bool {
-	for _, tt := range termTokens {
-		if tt == t.Type {
-			return true
-		}
-	}
-	return false
-}
-
-func (t *Token) IsOperator() bool {
-	for _, ot := range operatorTokens {
-		if ot == t.Type {
-			return true
-		}
-	}
-	return false
-}
-
-func (t *Token) GetPrec() int {
-	if t.Type == "ADD" || t.Type == "SUB" {
-		return 1
-	} else if t.Type == "MUL" || t.Type == "DIV" {
-		return 2
-	}
-	return 0
-}
-
-// String returns a printable string that represents the token
-func (t *Token) String() string {
-	if t.Type == SEP {
-		return fmt.Sprintf("(%s, \\n)", t.Type)
-	} else {
-		return fmt.Sprintf("(%s, %s)", t.Type, t.Value)
-	}
 }

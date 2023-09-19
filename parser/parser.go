@@ -44,7 +44,7 @@ func (p *Parser) GenerateNodes() (*NodeProg, error) {
 	return nodeProg, nil
 }
 
-// hasToken returns true if the is a next token
+// hasToken returns true if there is a next token
 func (p *Parser) hasToken() bool {
 	return p.index < len(p.tokens)
 }

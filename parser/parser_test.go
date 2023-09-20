@@ -21,7 +21,7 @@ var exampleFiles = []string{
 	"operations.tbd",
 }
 
-func TestParseNodes(t *testing.T) {
+func TestGenerateNodes(t *testing.T) {
 	// Iterates over the example files
 	for _, file := range exampleFiles {
 		// Run a separate test for each example file

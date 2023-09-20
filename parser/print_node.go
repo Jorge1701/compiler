@@ -1,57 +1,89 @@
 package parser
 
 import (
+	"compiler/tokenizer"
 	"fmt"
-	"strings"
 )
 
-func (n NodeProg) Print() {
-	fmt.Println("+ NodeProg")
-	for _, stmt := range n.Stmts {
-		fmt.Printf("|")
-		stmt.Print(0)
-	}
-}
+const (
+	lineMark     string = "│  "
+	nodeMark     string = "├─ "
+	lastNodeMark string = "└─ "
+	space        string = "   "
+)
 
-func (stmt NodeStmt) Print(offset int) {
-	switch stmt.t {
-	case TypeNodeStmtInit:
-		fmt.Printf("- NodeTypeStmtInit {Ident: '%s'}\n", stmt.Init.Ident.Value)
-		stmt.Init.Expr.Print(offset + 1)
-	case TypeNodeStmtExit:
-		fmt.Printf("- NodeTypeStmtExit\n")
-		stmt.Exit.Expr.Print(offset + 1)
+func PrintNode(n interface{}, indent string, last bool) {
+	fmt.Printf(indent)
+	if last {
+		fmt.Printf(lastNodeMark)
+		indent += space
+	} else {
+		fmt.Printf(nodeMark)
+		indent += lineMark
+	}
+
+	switch node := n.(type) {
+	case *NodeProg:
+		fmt.Println("NodeProg")
+
+		for i, stmt := range node.Stmts {
+			PrintNode(stmt, indent, i == len(node.Stmts)-1)
+		}
+	case NodeStmt:
+		fmt.Println("NodeStmt")
+
+		switch node.t {
+		case TypeNodeStmtInit:
+			PrintNode(node.Init, indent, true)
+		case TypeNodeStmtExit:
+			PrintNode(node.Exit, indent, true)
+		default:
+			caseNotImplemented("NodeStmt", indent, last)
+		}
+	case *NodeStmtInit:
+		fmt.Println("NodeTypeStmtInit")
+
+		PrintNode(node.Ident, indent, false)
+		PrintNode(node.Expr, indent, true)
+	case *NodeStmtExit:
+		fmt.Println("NodeTypeStmtExit")
+
+		PrintNode(node.Expr, indent, true)
+	case *NodeExpr:
+		fmt.Println("NodeExpr")
+
+		switch node.t {
+		case TypeNodeExprTerm:
+			PrintNode(node.Term, indent, true)
+		case TypeNodeExprOper:
+			PrintNode(node.Oper, indent, true)
+		default:
+			caseNotImplemented("NodeExpr", indent, last)
+		}
+	case *NodeTerm:
+		fmt.Println("NodeTerm")
+
+		switch node.t {
+		case TypeNodeTermLit:
+			PrintNode(node.Lit, indent, true)
+		case TypeNodeTermIdent:
+			PrintNode(node.Ident, indent, true)
+		default:
+			caseNotImplemented("NodeTerm", indent, last)
+		}
+	case *NodeOper:
+		fmt.Println("NodeOper")
+
+		PrintNode(node.Oper, indent, false)
+		PrintNode(node.Lhs, indent, false)
+		PrintNode(node.Rhs, indent, true)
+	case *tokenizer.Token:
+		fmt.Printf("Token %s\n", node.String())
 	default:
-		fmt.Println("NOT IMPLEMENTED NodeStmt.Print")
+		caseNotImplemented("switch", indent, last)
 	}
 }
 
-func (expr NodeExpr) Print(offset int) {
-	switch expr.t {
-	case TypeNodeExprTerm:
-		expr.Term.Print(offset + 1)
-	case TypeNodeExprOper:
-		expr.Oper.Print(offset + 1)
-	default:
-		fmt.Println("NOT IMPLEMENTED NodeExpr.Print")
-	}
-}
-
-func (term NodeTerm) Print(offset int) {
-	fmt.Printf("|%s- ", strings.Repeat(" ", offset))
-	switch term.t {
-	case TypeNodeTermLit:
-		fmt.Printf("NodeTypeTermLit {Lit: '%s'}\n", term.Lit.Value)
-	case TypeNodeTermIdent:
-		fmt.Printf("NodeTypeTermIdent {Ident: '%s'}\n", term.Ident.Value)
-	default:
-		fmt.Println("NOT IMPLEMENTED NodeTerm.Print")
-	}
-}
-
-func (oper NodeOper) Print(offset int) {
-	fmt.Printf("|%s- ", strings.Repeat(" ", offset))
-	fmt.Printf("NodeOper {Oper: '%s'}\n", oper.Oper.Value)
-	oper.Lhs.Print(offset + 1)
-	oper.Rhs.Print(offset + 1)
+func caseNotImplemented(caze, indent string, last bool) {
+	fmt.Printf("PrintNode case '%s' not implemented\n", caze)
 }

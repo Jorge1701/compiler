@@ -1,8 +1,6 @@
-int main() {
-    int value_one = 10
-    int value2 = value_one + 2
-    int c = 2 * 3
-    int d = value2 / c
-    int e = d - 2
-    exit e
-}
+int value_one = 10
+int value2 = value_one + 2
+int c = 2 * 3
+int d = value2 / c
+int e = d - 2
+exit value_one + value2 * c / d - e

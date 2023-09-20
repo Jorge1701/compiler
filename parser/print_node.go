@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"bytes"
 	"compiler/tokenizer"
 	"fmt"
 )
@@ -12,78 +13,84 @@ const (
 	space        string = "   "
 )
 
-func PrintNode(n interface{}, indent string, last bool) {
-	fmt.Printf(indent)
+func PrintNode(n interface{}) {
+	buff := bytes.NewBuffer([]byte{})
+	NodeToString(n, "", true, buff)
+	fmt.Println(buff.String())
+}
+
+func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
+	buff.WriteString(fmt.Sprintf(indent))
 	if last {
-		fmt.Printf(lastNodeMark)
+		buff.WriteString(fmt.Sprintf(lastNodeMark))
 		indent += space
 	} else {
-		fmt.Printf(nodeMark)
+		buff.WriteString(fmt.Sprintf(nodeMark))
 		indent += lineMark
 	}
 
 	switch node := n.(type) {
 	case *NodeProg:
-		fmt.Println("NodeProg")
+		buff.WriteString(fmt.Sprintln("NodeProg"))
 
 		for i, stmt := range node.Stmts {
-			PrintNode(stmt, indent, i == len(node.Stmts)-1)
+			NodeToString(stmt, indent, i == len(node.Stmts)-1, buff)
 		}
 	case NodeStmt:
-		fmt.Println("NodeStmt")
+		buff.WriteString(fmt.Sprintln("NodeStmt"))
 
 		switch node.t {
 		case TypeNodeStmtInit:
-			PrintNode(node.Init, indent, true)
+			NodeToString(node.Init, indent, true, buff)
 		case TypeNodeStmtExit:
-			PrintNode(node.Exit, indent, true)
+			NodeToString(node.Exit, indent, true, buff)
 		default:
-			caseNotImplemented("NodeStmt", indent, last)
+			caseNotImplemented("NodeStmt", indent, last, buff)
 		}
 	case *NodeStmtInit:
-		fmt.Println("NodeTypeStmtInit")
+		buff.WriteString(fmt.Sprintln("NodeTypeStmtInit"))
 
-		PrintNode(node.Ident, indent, false)
-		PrintNode(node.Expr, indent, true)
+		NodeToString(node.Ident, indent, false, buff)
+		NodeToString(node.Expr, indent, true, buff)
 	case *NodeStmtExit:
-		fmt.Println("NodeTypeStmtExit")
+		buff.WriteString(fmt.Sprintln("NodeTypeStmtExit"))
 
-		PrintNode(node.Expr, indent, true)
+		NodeToString(node.Expr, indent, true, buff)
 	case *NodeExpr:
-		fmt.Println("NodeExpr")
+		buff.WriteString(fmt.Sprintln("NodeExpr"))
 
 		switch node.t {
 		case TypeNodeExprTerm:
-			PrintNode(node.Term, indent, true)
+			NodeToString(node.Term, indent, true, buff)
 		case TypeNodeExprOper:
-			PrintNode(node.Oper, indent, true)
+			NodeToString(node.Oper, indent, true, buff)
 		default:
-			caseNotImplemented("NodeExpr", indent, last)
+			caseNotImplemented("NodeExpr", indent, last, buff)
 		}
 	case *NodeTerm:
-		fmt.Println("NodeTerm")
+		buff.WriteString(fmt.Sprintln("NodeTerm"))
 
 		switch node.t {
 		case TypeNodeTermLit:
-			PrintNode(node.Lit, indent, true)
+			NodeToString(node.Lit, indent, true, buff)
 		case TypeNodeTermIdent:
-			PrintNode(node.Ident, indent, true)
+			NodeToString(node.Ident, indent, true, buff)
 		default:
-			caseNotImplemented("NodeTerm", indent, last)
+			caseNotImplemented("NodeTerm", indent, last, buff)
 		}
 	case *NodeOper:
-		fmt.Println("NodeOper")
+		buff.WriteString(fmt.Sprintln("NodeOper"))
 
-		PrintNode(node.Oper, indent, false)
-		PrintNode(node.Lhs, indent, false)
-		PrintNode(node.Rhs, indent, true)
+		NodeToString(node.Oper, indent, false, buff)
+		NodeToString(node.Lhs, indent, false, buff)
+		NodeToString(node.Rhs, indent, true, buff)
 	case *tokenizer.Token:
-		fmt.Printf("Token %s\n", node.String())
+		buff.WriteString(fmt.Sprintf("Token %s\n", node.String()))
 	default:
-		caseNotImplemented("switch", indent, last)
+		caseNotImplemented("switch", indent, last, buff)
 	}
 }
 
-func caseNotImplemented(caze, indent string, last bool) {
-	fmt.Printf("PrintNode case '%s' not implemented\n", caze)
+func caseNotImplemented(caze, indent string, last bool, buff *bytes.Buffer) {
+	buff.WriteString(fmt.Sprintf("NodeToString case '%s' not implemented\n", caze))
 }

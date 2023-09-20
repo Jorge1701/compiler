@@ -1,0 +1,6 @@
+└─ NodeProg
+   └─ NodeStmt
+      └─ NodeTypeStmtExit
+         └─ NodeExpr
+            └─ NodeTerm
+               └─ Token (LITERAL, 0)

@@ -1,0 +1,13 @@
+└─ NodeProg
+   ├─ NodeStmt
+   │  └─ NodeTypeStmtInit
+   │     ├─ Token (IDENTIFIER, num)
+   │     └─ NodeExpr
+   │        └─ NodeTerm
+   │           └─ Token (LITERAL, 13)
+   └─ NodeStmt
+      └─ NodeTypeStmtExit
+         └─ NodeExpr
+            └─ NodeTerm
+               └─ Token (IDENTIFIER, num)
+

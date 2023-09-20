@@ -1,0 +1,85 @@
+└─ NodeProg
+   ├─ NodeStmt
+   │  └─ NodeTypeStmtInit
+   │     ├─ Token (IDENTIFIER, value_one)
+   │     └─ NodeExpr
+   │        └─ NodeTerm
+   │           └─ Token (LITERAL, 10)
+   ├─ NodeStmt
+   │  └─ NodeTypeStmtInit
+   │     ├─ Token (IDENTIFIER, value2)
+   │     └─ NodeExpr
+   │        └─ NodeOper
+   │           ├─ Token (ADD, +)
+   │           ├─ NodeExpr
+   │           │  └─ NodeTerm
+   │           │     └─ Token (IDENTIFIER, value_one)
+   │           └─ NodeExpr
+   │              └─ NodeTerm
+   │                 └─ Token (LITERAL, 2)
+   ├─ NodeStmt
+   │  └─ NodeTypeStmtInit
+   │     ├─ Token (IDENTIFIER, c)
+   │     └─ NodeExpr
+   │        └─ NodeOper
+   │           ├─ Token (MUL, *)
+   │           ├─ NodeExpr
+   │           │  └─ NodeTerm
+   │           │     └─ Token (LITERAL, 2)
+   │           └─ NodeExpr
+   │              └─ NodeTerm
+   │                 └─ Token (LITERAL, 3)
+   ├─ NodeStmt
+   │  └─ NodeTypeStmtInit
+   │     ├─ Token (IDENTIFIER, d)
+   │     └─ NodeExpr
+   │        └─ NodeOper
+   │           ├─ Token (DIV, /)
+   │           ├─ NodeExpr
+   │           │  └─ NodeTerm
+   │           │     └─ Token (IDENTIFIER, value2)
+   │           └─ NodeExpr
+   │              └─ NodeTerm
+   │                 └─ Token (IDENTIFIER, c)
+   ├─ NodeStmt
+   │  └─ NodeTypeStmtInit
+   │     ├─ Token (IDENTIFIER, e)
+   │     └─ NodeExpr
+   │        └─ NodeOper
+   │           ├─ Token (SUB, -)
+   │           ├─ NodeExpr
+   │           │  └─ NodeTerm
+   │           │     └─ Token (IDENTIFIER, d)
+   │           └─ NodeExpr
+   │              └─ NodeTerm
+   │                 └─ Token (LITERAL, 2)
+   └─ NodeStmt
+      └─ NodeTypeStmtExit
+         └─ NodeExpr
+            └─ NodeOper
+               ├─ Token (ADD, +)
+               ├─ NodeExpr
+               │  └─ NodeTerm
+               │     └─ Token (IDENTIFIER, value_one)
+               └─ NodeExpr
+                  └─ NodeOper
+                     ├─ Token (SUB, -)
+                     ├─ NodeExpr
+                     │  └─ NodeOper
+                     │     ├─ Token (MUL, *)
+                     │     ├─ NodeExpr
+                     │     │  └─ NodeTerm
+                     │     │     └─ Token (IDENTIFIER, value2)
+                     │     └─ NodeExpr
+                     │        └─ NodeOper
+                     │           ├─ Token (DIV, /)
+                     │           ├─ NodeExpr
+                     │           │  └─ NodeTerm
+                     │           │     └─ Token (IDENTIFIER, c)
+                     │           └─ NodeExpr
+                     │              └─ NodeTerm
+                     │                 └─ Token (IDENTIFIER, d)
+                     └─ NodeExpr
+                        └─ NodeTerm
+                           └─ Token (IDENTIFIER, e)
+

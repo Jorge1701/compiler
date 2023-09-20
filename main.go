@@ -39,5 +39,5 @@ func main() {
 
 	// Print parse tree
 	fmt.Println("=== Parse tree === ")
-	nodeProg.Print()
+	parser.PrintNode(nodeProg, "", true)
 }

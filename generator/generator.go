@@ -8,39 +8,105 @@ import (
 
 type Generator struct {
 	nodeProg *parser.NodeProg
+
+	dataBuff bytes.Buffer
+	textBuff bytes.Buffer
+
+	variables map[string]Variable
+	index     int
+}
+
+type Variable struct {
+	index int
 }
 
 func NewGenerator(nodeProg *parser.NodeProg) *Generator {
 	return &Generator{
-		nodeProg: nodeProg,
+		nodeProg:  nodeProg,
+		dataBuff:  *bytes.NewBuffer([]byte{}),
+		textBuff:  *bytes.NewBuffer([]byte{}),
+		variables: map[string]Variable{},
+		index:     0,
 	}
 }
 
-func (g *Generator) Generate() []byte {
+func (g *Generator) push(value string) {
+	g.textBuff.WriteString(fmt.Sprintf("    mov rax, %s\n", value))
+	g.textBuff.WriteString("    push rax\n")
+	g.index++
+}
+
+func (g *Generator) generateTerm(term *parser.NodeTerm) {
+	switch term.T {
+	case parser.TypeNodeTermLit:
+		g.textBuff.WriteString("    ; Term lit\n")
+		g.push(term.Lit.Value)
+	case parser.TypeNodeTermIdent:
+		g.textBuff.WriteString("    ; Term ident\n")
+		v, exists := g.variables[term.Ident.Value]
+		if !exists {
+			fmt.Println("ERROR Variable is not initialized")
+		}
+		g.textBuff.WriteString(fmt.Sprintf("    mov rax, [rsp+%d]\n", v.index*8))
+	default:
+		fmt.Println("Not supported generateTerm")
+	}
+}
+
+func (g *Generator) generateExpr(expr *parser.NodeExpr) {
+	switch expr.T {
+	case parser.TypeNodeExprTerm:
+		g.generateTerm(expr.Term)
+	default:
+		fmt.Println("Not supported generateExpr")
+	}
+}
+
+func (g *Generator) generateStmt(stmt parser.NodeStmt) {
+	switch stmt.T {
+	case parser.TypeNodeStmtExit:
+		g.generateExpr(stmt.Exit.Expr)
+		g.textBuff.WriteString("    ; Stmt Exit\n")
+		g.textBuff.WriteString("    mov rdi, rax\n")
+		g.textBuff.WriteString("    mov rax, 60\n")
+		g.textBuff.WriteString("    syscall\n")
+	case parser.TypeNodeStmtInit:
+		g.generateExpr(stmt.Init.Expr)
+		_, isUsed := g.variables[stmt.Init.Ident.Value]
+		if isUsed {
+			fmt.Println("ERROR: Variable already initialized")
+		}
+		g.variables[stmt.Init.Ident.Value] = Variable{
+			index: g.index,
+		}
+	default:
+		fmt.Println("Not supported generateStmt")
+	}
+}
+
+func (g *Generator) GenerateNASM() []byte {
 	buff := bytes.NewBuffer([]byte{})
 
-	dataBuff := bytes.NewBuffer([]byte{})
-	dataBuff.WriteString("section .data\n")
+	g.dataBuff.WriteString("section .data\n")
 
-	textBuff := bytes.NewBuffer([]byte{})
-	textBuff.WriteString("section .text\n")
-	textBuff.WriteString("global _start\n")
-	textBuff.WriteString("_start:\n")
+	g.textBuff.WriteString("section .text\n")
+	g.textBuff.WriteString("global _start\n")
+	g.textBuff.WriteString("_start:\n")
 
 	for _, s := range g.nodeProg.Stmts {
-		fmt.Println(s) // Refactoring...
+		g.generateStmt(s)
 	}
 
-	dataBuff.WriteString("\n")
-	textBuff.WriteString("\n")
+	g.dataBuff.WriteString("\n")
+	g.textBuff.WriteString("\n")
 
 	// Exit without error at the end, if no other exit then this prevents segmentation fault
-	textBuff.WriteString("    mov rax, 60\n")
-	textBuff.WriteString("    mov rdi,0\n")
-	textBuff.WriteString("    syscall\n")
+	g.textBuff.WriteString("    mov rax, 60\n")
+	g.textBuff.WriteString("    mov rdi,0\n")
+	g.textBuff.WriteString("    syscall\n")
 
-	buff.WriteString(dataBuff.String())
-	buff.WriteString(textBuff.String())
+	buff.WriteString(g.dataBuff.String())
+	buff.WriteString(g.textBuff.String())
 
 	return buff.Bytes()
 }

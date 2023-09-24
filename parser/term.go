@@ -11,7 +11,7 @@ const (
 )
 
 type NodeTerm struct {
-	t     byte
+	T     byte
 	Lit   *tokenizer.Token
 	Ident *tokenizer.Token
 }
@@ -19,12 +19,12 @@ type NodeTerm struct {
 func (p *Parser) parseNodeTerm() (NodeTerm, error) {
 	if p.hasToken() && p.peek().IsType(tokenizer.LITERAL) {
 		return NodeTerm{
-			t:   TypeNodeTermLit,
+			T:   TypeNodeTermLit,
 			Lit: p.consume(),
 		}, nil
 	} else if p.hasToken() && p.peek().IsType(tokenizer.IDENTIFIER) {
 		return NodeTerm{
-			t:     TypeNodeTermIdent,
+			T:     TypeNodeTermIdent,
 			Ident: p.consume(),
 		}, nil
 	}

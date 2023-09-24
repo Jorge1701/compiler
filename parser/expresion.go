@@ -11,7 +11,7 @@ const (
 )
 
 type NodeExpr struct {
-	t    byte
+	T    byte
 	Term *NodeTerm
 	Oper *NodeOper
 }
@@ -29,7 +29,7 @@ func (p *Parser) parseNodeExpr(minPrec int) (NodeExpr, error) {
 			return NodeExpr{}, err
 		}
 		return NodeExpr{
-			t:    TypeNodeExprTerm,
+			T:    TypeNodeExprTerm,
 			Term: &term,
 		}, nil
 	}

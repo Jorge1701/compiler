@@ -15,7 +15,7 @@ func (p *Parser) parseNodeExprOper(minPrec int) (NodeExpr, error) {
 	}
 
 	expr := NodeExpr{
-		t:    TypeNodeExprTerm,
+		T:    TypeNodeExprTerm,
 		Term: &term,
 	}
 
@@ -32,7 +32,7 @@ func (p *Parser) parseNodeExprOper(minPrec int) (NodeExpr, error) {
 		}
 		lhs := expr
 		expr = NodeExpr{
-			t: TypeNodeExprOper,
+			T: TypeNodeExprOper,
 			Oper: &NodeOper{
 				Oper: oper,
 				Lhs:  &lhs,

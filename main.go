@@ -42,12 +42,12 @@ func main() {
 	fmt.Println("=== Parse tree === ")
 	parser.PrintNode(nodeProg)
 
-    g := generator.NewGenerator(nodeProg)
-    nasmBs := g.GenerateNASM()
-    fmt.Println("=== NASM ===")
-    fmt.Println(string(nasmBs))
+	g := generator.NewGenerator(nodeProg)
+	nasmBs := g.GenerateNASM()
+	fmt.Println("=== NASM ===")
+	fmt.Println(string(nasmBs))
 
-    // Write asm file
+	// Write asm file
 	err = os.WriteFile("output.asm", nasmBs, 0755)
 	if err != nil {
 		log.Fatal(err)

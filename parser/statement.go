@@ -11,7 +11,7 @@ const (
 )
 
 type NodeStmt struct {
-	t    byte
+	T    byte
 	Init *NodeStmtInit
 	Exit *NodeStmtExit
 }
@@ -36,7 +36,7 @@ func (p *Parser) parseNodeStmtInit() (NodeStmt, error) {
 			return NodeStmt{}, err
 		}
 		return NodeStmt{
-			t: TypeNodeStmtInit,
+			T: TypeNodeStmtInit,
 			Init: &NodeStmtInit{
 				Ident: ident,
 				Expr:  &expr,
@@ -54,7 +54,7 @@ func (p *Parser) parseNodeStmtExit() (NodeStmt, error) {
 			return NodeStmt{}, err
 		}
 		return NodeStmt{
-			t: TypeNodeStmtExit,
+			T: TypeNodeStmtExit,
 			Exit: &NodeStmtExit{
 				Expr: &expr,
 			},

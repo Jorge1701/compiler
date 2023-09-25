@@ -39,7 +39,7 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 	case NodeStmt:
 		buff.WriteString(fmt.Sprintln("NodeStmt"))
 
-		switch node.t {
+		switch node.T {
 		case TypeNodeStmtInit:
 			NodeToString(node.Init, indent, true, buff)
 		case TypeNodeStmtExit:
@@ -59,7 +59,7 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 	case *NodeExpr:
 		buff.WriteString(fmt.Sprintln("NodeExpr"))
 
-		switch node.t {
+		switch node.T {
 		case TypeNodeExprTerm:
 			NodeToString(node.Term, indent, true, buff)
 		case TypeNodeExprOper:
@@ -70,7 +70,7 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 	case *NodeTerm:
 		buff.WriteString(fmt.Sprintln("NodeTerm"))
 
-		switch node.t {
+		switch node.T {
 		case TypeNodeTermLit:
 			NodeToString(node.Lit, indent, true, buff)
 		case TypeNodeTermIdent:

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"compiler/generator"
 	"compiler/parser"
 	"compiler/tokenizer"
 	"fmt"
@@ -40,4 +41,15 @@ func main() {
 	// Print parse tree
 	fmt.Println("=== Parse tree === ")
 	parser.PrintNode(nodeProg)
+
+	g := generator.NewGenerator(nodeProg)
+	nasmBs := g.GenerateNASM()
+	fmt.Println("=== NASM ===")
+	fmt.Println(string(nasmBs))
+
+	// Write asm file
+	err = os.WriteFile("output.asm", nasmBs, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

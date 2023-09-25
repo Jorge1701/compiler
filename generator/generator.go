@@ -32,14 +32,19 @@ func NewGenerator(nodeProg *parser.NodeProg) *Generator {
 }
 
 func (g *Generator) push(value string) {
-	g.textBuff.WriteString(fmt.Sprintf("    mov rax, %s\n", value))
-	g.textBuff.WriteString("    push rax\n")
 	g.index++
+	g.textBuff.WriteString(fmt.Sprintf("    mov rax, %s\n", value))
+	g.textBuff.WriteString(fmt.Sprintf("    push rax ; index at %d\n", g.index))
 }
 
 func (g *Generator) pushReg(reg string) {
-	g.textBuff.WriteString(fmt.Sprintf("    push %s\n", reg))
 	g.index++
+	g.textBuff.WriteString(fmt.Sprintf("    push %s ; index at %d\n", reg, g.index))
+}
+
+func (g *Generator) popSize(size int) {
+	g.index -= size
+	g.textBuff.WriteString(fmt.Sprintf("    add rsp, %d ; Delete %d from stack\n", size*8, size))
 }
 
 func (g *Generator) generateTerm(term *parser.NodeTerm) {
@@ -48,12 +53,13 @@ func (g *Generator) generateTerm(term *parser.NodeTerm) {
 		g.textBuff.WriteString("    ; Term lit\n")
 		g.push(term.Lit.Value)
 	case parser.TypeNodeTermIdent:
-		g.textBuff.WriteString("    ; Term ident\n")
+		g.textBuff.WriteString(fmt.Sprintf("    ; Term ident '%s'\n", term.Ident.Value))
 		v, exists := g.variables[term.Ident.Value]
 		if !exists {
 			fmt.Println("ERROR Variable is not initialized")
 		}
 		g.textBuff.WriteString(fmt.Sprintf("    mov rax, [rsp+%d]\n", (g.index-v.index)*8))
+		g.pushReg("rax")
 	default:
 		fmt.Println("Not supported generateTerm")
 	}
@@ -73,14 +79,17 @@ func (g *Generator) generateExpr(expr *parser.NodeExpr) {
 		switch expr.Oper.Oper.Type {
 		case tokenizer.ADD:
 			g.textBuff.WriteString("    add rax, rbx\n")
+		case tokenizer.SUB:
+			g.textBuff.WriteString("    sub rax, rbx\n")
 		case tokenizer.MUL:
 			g.textBuff.WriteString("    mul rbx\n")
+		case tokenizer.DIV:
+			g.textBuff.WriteString("    div rbx\n")
 		default:
 			fmt.Println("Not supported operation generateExpr")
 		}
-		g.textBuff.WriteString("    add rsp, 16 ; Delete last operation from stack\n")
+		g.popSize(2)
 		g.pushReg("rax")
-		g.index++
 	default:
 		fmt.Println("Not supported generateExpr")
 	}
@@ -90,7 +99,7 @@ func (g *Generator) generateStmt(stmt parser.NodeStmt) {
 	switch stmt.T {
 	case parser.TypeNodeStmtInit:
 		g.generateExpr(stmt.Init.Expr)
-		g.textBuff.WriteString(fmt.Sprintf("    ; Stmt Init '%s'\n", stmt.Init.Ident.Value))
+		g.textBuff.WriteString(fmt.Sprintf("    ; Save variable '%s' at index %d\n", stmt.Init.Ident.Value, g.index))
 		_, isUsed := g.variables[stmt.Init.Ident.Value]
 		if isUsed {
 			fmt.Println("ERROR: Variable already initialized")

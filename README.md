@@ -95,6 +95,8 @@ $$
     \begin{cases}
         \text{int}\space\it{identifier}\space\text{=}\space[\text{Expresion}]
         \\
+        \it{identifier}\space\text{=}\space[\text{Expresion}]
+        \\
         \text{exit}\space[\text{Expresion}]
     \end{cases}
     \\

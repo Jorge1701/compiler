@@ -29,6 +29,12 @@ func (p *Parser) GenerateNodes() (*NodeProg, error) {
 				return nodeProg, err
 			}
 			nodeProg.Stmts = append(nodeProg.Stmts, node)
+		} else if p.peek().IsType(tokenizer.IDENTIFIER) {
+			node, err := p.parseNodeStmtReassign()
+			if err != nil {
+				return nodeProg, err
+			}
+			nodeProg.Stmts = append(nodeProg.Stmts, node)
 		} else if p.peek().IsType(tokenizer.EXIT) {
 			node, err := p.parseNodeStmtExit()
 			if err != nil {

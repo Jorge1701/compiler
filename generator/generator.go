@@ -42,6 +42,11 @@ func (g *Generator) pushReg(reg string) {
 	g.textBuff.WriteString(fmt.Sprintf("    push %s ; index at %d\n", reg, g.index))
 }
 
+func (g *Generator) popTo(reg string) {
+	g.index--
+	g.textBuff.WriteString(fmt.Sprintf("    pop %s\n", reg))
+}
+
 func (g *Generator) popSize(size int) {
 	g.index -= size
 	g.textBuff.WriteString(fmt.Sprintf("    add rsp, %d ; Delete %d from stack\n", size*8, size))
@@ -99,14 +104,27 @@ func (g *Generator) generateStmt(stmt parser.NodeStmt) {
 	switch stmt.T {
 	case parser.TypeNodeStmtInit:
 		g.generateExpr(stmt.Init.Expr)
-		g.textBuff.WriteString(fmt.Sprintf("    ; Save variable '%s' at index %d\n", stmt.Init.Ident.Value, g.index))
-		_, isUsed := g.variables[stmt.Init.Ident.Value]
+		varName := stmt.Init.Ident.Value
+
+		_, isUsed := g.variables[varName]
 		if isUsed {
 			fmt.Println("ERROR: Variable already initialized")
 		}
-		g.variables[stmt.Init.Ident.Value] = Variable{
+		g.textBuff.WriteString(fmt.Sprintf("    ; Save variable '%s' at index %d\n", varName, g.index))
+		g.variables[varName] = Variable{
 			index: g.index,
 		}
+	case parser.TypeNodeStmtReassign:
+		g.generateExpr(stmt.Reassign.Expr)
+		varName := stmt.Reassign.Ident.Value
+		v, existsVar := g.variables[varName]
+		if !existsVar {
+			fmt.Println("ERROR: Variable not initialized")
+		}
+
+		g.textBuff.WriteString(fmt.Sprintf("    ; Reassign variable '%s' at index %d\n", varName, g.index))
+		g.popTo("rax")
+		g.textBuff.WriteString(fmt.Sprintf("    mov [rsp+%d], rax\n", (g.index-v.index)*8))
 	case parser.TypeNodeStmtExit:
 		g.generateExpr(stmt.Exit.Expr)
 		g.textBuff.WriteString("    ; Stmt Exit\n")

@@ -62,7 +62,8 @@ func generateTokens(t *testing.T, file string) []Token {
 	}
 
 	tokenizer := NewTokenizer(bytes.Runes(bs))
-	return tokenizer.GenerateTokens()
+	tokenizer.GenerateTokens()
+	return tokenizer.GetTokens()
 }
 
 // readResultsFile reads the contents of the '.tokens' file which contains

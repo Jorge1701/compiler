@@ -55,9 +55,12 @@ func generateNodes(t *testing.T, file string) *NodeProg {
 	}
 
 	tokenizer := tokenizer.NewTokenizer(bytes.Runes(bs))
-	tokens := tokenizer.GenerateTokens()
+	err = tokenizer.GenerateTokens()
+	if err != nil {
+		t.Fatalf("Error generating tokens for file '%s': %s", file, err)
+	}
 
-	parser := NewParser(tokens)
+	parser := NewParser(tokenizer.GetTokens())
 	nodeProg, err := parser.GenerateNodes()
 	if err != nil {
 		t.Fatalf("Error generating nodes %s", err)

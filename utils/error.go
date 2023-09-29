@@ -1,6 +1,8 @@
-package error_wrapper
+package utils
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Error struct {
 	Msg    string
@@ -8,11 +10,11 @@ type Error struct {
 	Column int
 }
 
-func NewError(msg string, row, column int) *Error {
+func NewError(msg string, pos *FilePosition) *Error {
 	return &Error{
 		Msg:    msg,
-		Row:    row,
-		Column: column,
+		Row:    pos.Row,
+		Column: pos.Column,
 	}
 }
 

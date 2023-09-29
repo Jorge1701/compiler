@@ -2,7 +2,7 @@ package tokenizer
 
 import (
 	"bytes"
-	"compiler/error_wrapper"
+	"compiler/utils"
 	"fmt"
 	"unicode"
 )
@@ -24,7 +24,7 @@ func NewTokenizer(runes []rune) *Tokenizer {
 	}
 }
 
-// GenerateTokens analyzes the list of runes and generates a list of tokens you can get with GetTokens()
+// GenerateTokens analyzes the list of runes and generates a list of tokens you can get with GetTokens(
 func (t *Tokenizer) GenerateTokens() error {
 	buff := bytes.NewBuffer([]byte{})
 
@@ -83,10 +83,9 @@ func (t *Tokenizer) GenerateTokens() error {
 			t.createToken(LITERAL, buff.String())
 		} else {
 			// If there is an unknown symbol we just return an error
-			return error_wrapper.NewError(
+			return utils.NewError(
 				fmt.Sprintf("Unexpected symbol '%c'", t.peek()),
-				t.line,
-				t.index-t.lineIndexStart,
+				t.getTokenPosition(),
 			)
 		}
 	}
@@ -122,6 +121,10 @@ func (t *Tokenizer) createToken(tokenType TokenType, value string) {
 	t.tokens = append(t.tokens, Token{
 		Type:  tokenType,
 		Value: value,
-		Pos:   NewPosition(t.line+1, t.tokenIndexStart+1),
+		Pos:   t.getTokenPosition(),
 	})
+}
+
+func (t *Tokenizer) getTokenPosition() *utils.FilePosition {
+	return utils.NewPosition(t.line+1, t.tokenIndexStart+1)
 }

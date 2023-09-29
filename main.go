@@ -24,7 +24,10 @@ func main() {
 
 	// Tokenize the input
 	t := tokenizer.NewTokenizer(bytes.Runes(bs))
-	tokens := t.GenerateTokens()
+	tokens, err := t.GenerateTokens()
+	if err != nil {
+		panic(fmt.Sprintf("Tokenizer error: %s", err))
+	}
 
 	// Print tokens
 	fmt.Println("=== Tokens === ")

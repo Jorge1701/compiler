@@ -97,7 +97,14 @@ $$
         \\
         \it{identifier}\space\text{=}\space[\text{Expresion}]
         \\
+        [\text{Scope}]
+        \\
         \text{exit}\space[\text{Expresion}]
+    \end{cases}
+    \\
+    [\text{Scope}]&\to              % [Scope]
+    \begin{cases}
+        \{[\text{Statement}]^*\}
     \end{cases}
     \\
     [\text{Expresion}]&\to          % [Expresion]

@@ -125,6 +125,19 @@ func (g *Generator) generateStmt(stmt parser.NodeStmt) {
 		g.textBuff.WriteString(fmt.Sprintf("    ; Reassign variable '%s' at index %d\n", varName, g.index))
 		g.popTo("rax")
 		g.textBuff.WriteString(fmt.Sprintf("    mov [rsp+%d], rax\n", (g.index-v.index)*8))
+	case parser.TypeNodeStmtScope:
+		indexBefore := g.index
+		for _, scopeStmt := range *stmt.Scope.Scope.Stmts {
+			g.generateStmt(scopeStmt)
+		}
+		if g.index != indexBefore {
+			g.popSize((g.index - indexBefore) * 8)
+			for varName, variable := range g.variables {
+				if variable.index > indexBefore {
+					delete(g.variables, varName)
+				}
+			}
+		}
 	case parser.TypeNodeStmtExit:
 		g.generateExpr(stmt.Exit.Expr)
 		g.textBuff.WriteString("    ; Stmt Exit\n")

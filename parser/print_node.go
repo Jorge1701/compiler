@@ -44,6 +44,8 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 			NodeToString(node.Init, indent, true, buff)
 		case TypeNodeStmtReassign:
 			NodeToString(node.Reassign, indent, true, buff)
+		case TypeNodeStmtScope:
+			NodeToString(node.Scope, indent, true, buff)
 		case TypeNodeStmtExit:
 			NodeToString(node.Exit, indent, true, buff)
 		default:
@@ -59,6 +61,12 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 
 		NodeToString(node.Ident, indent, false, buff)
 		NodeToString(node.Expr, indent, true, buff)
+	case *NodeStmtScope:
+		buff.WriteString(fmt.Sprintln("NodeTypeStmtScope"))
+
+		for i, stmt := range *node.Scope.Stmts {
+			NodeToString(stmt, indent, i == len(*node.Scope.Stmts)-1, buff)
+		}
 	case *NodeStmtExit:
 		buff.WriteString(fmt.Sprintln("NodeTypeStmtExit"))
 

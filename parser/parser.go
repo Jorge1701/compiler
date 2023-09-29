@@ -23,30 +23,20 @@ func (p *Parser) GenerateNodes() (*NodeProg, error) {
 	}
 
 	for p.hasToken() {
-		if p.peek().IsType(tokenizer.INT) {
-			node, err := p.parseNodeStmtInit()
-			if err != nil {
-				return nodeProg, err
-			}
-			nodeProg.Stmts = append(nodeProg.Stmts, node)
-		} else if p.peek().IsType(tokenizer.IDENTIFIER) {
-			node, err := p.parseNodeStmtReassign()
-			if err != nil {
-				return nodeProg, err
-			}
-			nodeProg.Stmts = append(nodeProg.Stmts, node)
-		} else if p.peek().IsType(tokenizer.EXIT) {
-			node, err := p.parseNodeStmtExit()
-			if err != nil {
-				return nodeProg, err
-			}
-			nodeProg.Stmts = append(nodeProg.Stmts, node)
-		} else if p.peek().IsType(tokenizer.SEP) {
+		stmt, err := p.parseNodeStmt()
+		if err != nil {
+			return nodeProg, err
+		}
+
+		nodeProg.Stmts = append(nodeProg.Stmts, stmt)
+
+		if p.peek().IsType(tokenizer.SEP) {
 			p.consume()
 		} else {
 			return nodeProg, fmt.Errorf("Error in parsing, cannot parse token '%s'", p.peek().String())
 		}
 	}
+
 	return nodeProg, nil
 }
 

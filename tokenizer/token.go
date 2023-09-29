@@ -1,10 +1,14 @@
 package tokenizer
 
-import "fmt"
+import (
+	"compiler/utils"
+	"fmt"
+)
 
 type Token struct {
 	Type  TokenType
 	Value string
+	Pos   *utils.FilePosition
 }
 
 // MatchAny returns true if the type of the token matches any of the given types

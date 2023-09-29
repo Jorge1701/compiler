@@ -2,12 +2,20 @@ package tokenizer
 
 import (
 	"bytes"
+	"compiler/utils"
+	"fmt"
 	"unicode"
 )
 
 type Tokenizer struct {
 	runes []rune
 	index int
+
+	tokens []Token
+
+	line            int
+	lineIndexStart  int
+	tokenIndexStart int
 }
 
 func NewTokenizer(runes []rune) *Tokenizer {
@@ -16,18 +24,26 @@ func NewTokenizer(runes []rune) *Tokenizer {
 	}
 }
 
-// GenerateTokens analyzes the list of runes and generates a []Token
-func (t *Tokenizer) GenerateTokens() (tokens []Token) {
+// GenerateTokens analyzes the list of runes and generates a list of tokens you can get with GetTokens(
+func (t *Tokenizer) GenerateTokens() error {
 	buff := bytes.NewBuffer([]byte{})
 
 	for t.hasRune() {
+		// Track index of start of token
+		t.tokenIndexStart = t.index - t.lineIndexStart
+
 		if tokenType, foundMatch := singleRuneTokens[t.peek()]; foundMatch {
 			// Try to match a single rune token, tokens that match a single character
 
-			tokens = append(tokens, Token{
-				Type:  tokenType,
-				Value: string(t.consume()),
-			})
+			value := t.consume()
+			t.createToken(tokenType, string(value))
+
+			if value == '\n' {
+				// Track line in file
+				t.line++
+				// Track where the line starts to later figure out the token position
+				t.lineIndexStart = t.index
+			}
 		} else if unicode.IsSpace(t.peek()) {
 			// Other spaces can be consumed and ignored
 
@@ -48,16 +64,10 @@ func (t *Tokenizer) GenerateTokens() (tokens []Token) {
 			tokenType, foundMatch := listOfKeywords[value]
 			if foundMatch {
 				// If value is in the list of keywords then we create a token of that type
-				tokens = append(tokens, Token{
-					Type:  tokenType,
-					Value: value,
-				})
+				t.createToken(tokenType, value)
 			} else {
 				// If it's not in the list of keywords then it's an identifier
-				tokens = append(tokens, Token{
-					Type:  IDENTIFIER,
-					Value: value,
-				})
+				t.createToken(IDENTIFIER, value)
 			}
 		} else if unicode.IsNumber(t.peek()) {
 			// If we peek and its a number then we match all numbers for the literal
@@ -70,14 +80,22 @@ func (t *Tokenizer) GenerateTokens() (tokens []Token) {
 			}
 
 			// All numbers is a literal
-			tokens = append(tokens, Token{
-				Type:  LITERAL,
-				Value: buff.String(),
-			})
+			t.createToken(LITERAL, buff.String())
+		} else {
+			// If there is an unknown symbol we just return an error
+			return utils.NewError(
+				fmt.Sprintf("Unexpected symbol '%c'", t.peek()),
+				t.getTokenPosition(),
+			)
 		}
 	}
 
-	return tokens
+	return nil
+}
+
+// GetTokens return list of generated tokens
+func (t *Tokenizer) GetTokens() []Token {
+	return t.tokens
 }
 
 // hasRune return true if the are still runes left to tokenize
@@ -96,4 +114,17 @@ func (t *Tokenizer) consume() rune {
 	r := t.peek()
 	t.index++
 	return r
+}
+
+// createToken creates a new token with the given info and tracked position in file
+func (t *Tokenizer) createToken(tokenType TokenType, value string) {
+	t.tokens = append(t.tokens, Token{
+		Type:  tokenType,
+		Value: value,
+		Pos:   t.getTokenPosition(),
+	})
+}
+
+func (t *Tokenizer) getTokenPosition() *utils.FilePosition {
+	return utils.NewPosition(t.line+1, t.tokenIndexStart+1)
 }

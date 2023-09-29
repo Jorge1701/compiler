@@ -11,6 +11,8 @@ type Tokenizer struct {
 	runes []rune
 	index int
 
+	tokens []Token
+
 	line            int
 	lineIndexStart  int
 	tokenIndexStart int
@@ -22,9 +24,8 @@ func NewTokenizer(runes []rune) *Tokenizer {
 	}
 }
 
-// GenerateTokens analyzes the list of runes and generates a []Token
-func (t *Tokenizer) GenerateTokens() ([]Token, error) {
-	tokens := []Token{}
+// GenerateTokens analyzes the list of runes and generates a list of tokens you can get with GetTokens()
+func (t *Tokenizer) GenerateTokens() error {
 	buff := bytes.NewBuffer([]byte{})
 
 	for t.hasRune() {
@@ -35,7 +36,7 @@ func (t *Tokenizer) GenerateTokens() ([]Token, error) {
 			// Try to match a single rune token, tokens that match a single character
 
 			value := t.consume()
-			tokens = append(tokens, t.createToken(tokenType, string(value)))
+			t.createToken(tokenType, string(value))
 
 			if value == '\n' {
 				// Track line in file
@@ -63,10 +64,10 @@ func (t *Tokenizer) GenerateTokens() ([]Token, error) {
 			tokenType, foundMatch := listOfKeywords[value]
 			if foundMatch {
 				// If value is in the list of keywords then we create a token of that type
-				tokens = append(tokens, t.createToken(tokenType, value))
+				t.createToken(tokenType, value)
 			} else {
 				// If it's not in the list of keywords then it's an identifier
-				tokens = append(tokens, t.createToken(IDENTIFIER, value))
+				t.createToken(IDENTIFIER, value)
 			}
 		} else if unicode.IsNumber(t.peek()) {
 			// If we peek and its a number then we match all numbers for the literal
@@ -79,10 +80,10 @@ func (t *Tokenizer) GenerateTokens() ([]Token, error) {
 			}
 
 			// All numbers is a literal
-			tokens = append(tokens, t.createToken(LITERAL, buff.String()))
+			t.createToken(LITERAL, buff.String())
 		} else {
 			// If there is an unknown symbol we just return an error
-			return nil, error_wrapper.NewError(
+			return error_wrapper.NewError(
 				fmt.Sprintf("Unexpected symbol '%c'", t.peek()),
 				t.line,
 				t.index-t.lineIndexStart,
@@ -90,7 +91,12 @@ func (t *Tokenizer) GenerateTokens() ([]Token, error) {
 		}
 	}
 
-	return tokens, nil
+	return nil
+}
+
+// GetTokens return list of generated tokens
+func (t *Tokenizer) GetTokens() []Token {
+	return t.tokens
 }
 
 // hasRune return true if the are still runes left to tokenize
@@ -112,10 +118,10 @@ func (t *Tokenizer) consume() rune {
 }
 
 // createToken creates a new token with the given info and tracked position in file
-func (t *Tokenizer) createToken(tokenType TokenType, value string) Token {
-	return Token{
+func (t *Tokenizer) createToken(tokenType TokenType, value string) {
+	t.tokens = append(t.tokens, Token{
 		Type:  tokenType,
 		Value: value,
 		Pos:   NewPosition(t.line+1, t.tokenIndexStart+1),
-	}
+	})
 }

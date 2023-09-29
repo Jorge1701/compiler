@@ -24,18 +24,18 @@ func main() {
 
 	// Tokenize the input
 	t := tokenizer.NewTokenizer(bytes.Runes(bs))
-	tokens, err := t.GenerateTokens()
+	err = t.GenerateTokens()
 	if err != nil {
 		panic(fmt.Sprintf("Tokenizer error: %s", err))
 	}
 
 	// Print tokens
 	fmt.Println("=== Tokens === ")
-	for _, t := range tokens {
+	for _, t := range t.GetTokens() {
 		fmt.Println(t.String())
 	}
 
-	p := parser.NewParser(tokens)
+	p := parser.NewParser(t.GetTokens())
 	nodeProg, err := p.GenerateNodes()
 	if err != nil {
 		fmt.Println(err)

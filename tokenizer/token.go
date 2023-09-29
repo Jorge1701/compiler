@@ -2,9 +2,23 @@ package tokenizer
 
 import "fmt"
 
+type FilePosition struct {
+	Row    int
+	Column int
+}
+
 type Token struct {
 	Type  TokenType
 	Value string
+	Pos   *FilePosition
+}
+
+// NewPosition returns a FilePosition with row and column
+func NewPosition(row, column int) *FilePosition {
+	return &FilePosition{
+		Row:    row,
+		Column: column,
+	}
 }
 
 // MatchAny returns true if the type of the token matches any of the given types

@@ -97,9 +97,9 @@ $$
         \\
         \it{identifier}\space\text{=}\space[\text{Expresion}]
         \\
-        [\text{Scope}]
-        \\
         \text{exit}\space[\text{Expresion}]
+        \\
+        [\text{Scope}]
     \end{cases}
     \\
     [\text{Scope}]&\to              % [Scope]

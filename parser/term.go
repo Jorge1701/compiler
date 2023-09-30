@@ -16,22 +16,18 @@ type NodeTerm struct {
 	Ident *tokenizer.Token
 }
 
-func (p *Parser) parseNodeTerm() (NodeTerm, error) {
+func (p *Parser) parseNodeTerm() (*NodeTerm, error) {
 	if p.hasToken() && p.peek().IsType(tokenizer.LITERAL) {
-		return NodeTerm{
+		return &NodeTerm{
 			T:   TypeNodeTermLit,
 			Lit: p.consume(),
 		}, nil
 	} else if p.hasToken() && p.peek().IsType(tokenizer.IDENTIFIER) {
-		return NodeTerm{
+		return &NodeTerm{
 			T:     TypeNodeTermIdent,
 			Ident: p.consume(),
 		}, nil
 	}
 
-	if p.hasToken() {
-		return NodeTerm{}, fmt.Errorf("No tokens left")
-	} else {
-		return NodeTerm{}, fmt.Errorf("Non valid term '%s'", p.peek().String())
-	}
+	return nil, fmt.Errorf("Invalid term: %s", p.unexpectedToken())
 }

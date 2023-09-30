@@ -8,15 +8,15 @@ type NodeOper struct {
 	Rhs  *NodeExpr
 }
 
-func (p *Parser) parseNodeExprOper(minPrec int) (NodeExpr, error) {
+func (p *Parser) parseNodeExprOper(minPrec int) (*NodeExpr, error) {
 	term, err := p.parseNodeTerm()
 	if err != nil {
-		return NodeExpr{}, err
+		return nil, err
 	}
 
 	expr := NodeExpr{
 		T:    TypeNodeExprTerm,
-		Term: &term,
+		Term: term,
 	}
 
 	for {
@@ -28,7 +28,7 @@ func (p *Parser) parseNodeExprOper(minPrec int) (NodeExpr, error) {
 
 		rhs, err := p.parseNodeExpr(oper.GetPrec())
 		if err != nil {
-			return NodeExpr{}, err
+			return nil, err
 		}
 		lhs := expr
 		expr = NodeExpr{
@@ -36,8 +36,8 @@ func (p *Parser) parseNodeExprOper(minPrec int) (NodeExpr, error) {
 			Oper: &NodeOper{
 				Oper: oper,
 				Lhs:  &lhs,
-				Rhs:  &rhs,
+				Rhs:  rhs,
 			}}
 	}
-	return expr, nil
+	return &expr, nil
 }

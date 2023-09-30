@@ -1,14 +1,11 @@
 package utils
 
 type FilePosition struct {
-	Row    int
-	Column int
+	line   int
+	column int
 }
 
-// NewPosition returns a FilePosition with row and column
-func NewPosition(row, column int) *FilePosition {
-	return &FilePosition{
-		Row:    row,
-		Column: column,
-	}
+// NewPosition returns a FilePosition with line and column
+func NewPosition(line, column int) *FilePosition {
+	return &FilePosition{line, column}
 }

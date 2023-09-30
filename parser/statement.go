@@ -78,7 +78,7 @@ func (p *Parser) parseNodeStmtInit() (*NodeStmt, error) {
 			T: TypeNodeStmtInit,
 			Init: &NodeStmtInit{
 				Ident: ident,
-				Expr:  &expr,
+				Expr:  expr,
 			},
 		}, nil
 	}
@@ -100,7 +100,7 @@ func (p *Parser) parseNodeStmtReassign() (*NodeStmt, error) {
 			T: TypeNodeStmtReassign,
 			Reassign: &NodeStmtReassign{
 				Ident: ident,
-				Expr:  &expr,
+				Expr:  expr,
 			},
 		}, nil
 	}
@@ -133,7 +133,7 @@ func (p *Parser) parseNodeStmtExit() (*NodeStmt, error) {
 		return &NodeStmt{
 			T: TypeNodeStmtExit,
 			Exit: &NodeStmtExit{
-				Expr: &expr,
+				Expr: expr,
 			},
 		}, nil
 	}

@@ -16,23 +16,25 @@ type NodeExpr struct {
 	Oper *NodeOper
 }
 
-func (p *Parser) parseNodeExpr(minPrec int) (NodeExpr, error) {
+func (p *Parser) parseNodeExpr(minPrec int) (*NodeExpr, error) {
 	if p.hasTokens(3) && p.peekAhead(1).IsOperator() {
 		oper, err := p.parseNodeExprOper(minPrec)
 		if err != nil {
-			return NodeExpr{}, err
+			return nil, err
 		}
+
 		return oper, nil
 	} else if p.hasToken() && p.peek().MatchAny(tokenizer.LITERAL, tokenizer.IDENTIFIER) {
 		term, err := p.parseNodeTerm()
 		if err != nil {
-			return NodeExpr{}, err
+			return nil, err
 		}
-		return NodeExpr{
+
+		return &NodeExpr{
 			T:    TypeNodeExprTerm,
-			Term: &term,
+			Term: term,
 		}, nil
 	}
 
-	return NodeExpr{}, fmt.Errorf("Error parsing expresion")
+	return nil, fmt.Errorf("Invalid expresion: %s", p.unexpectedToken())
 }

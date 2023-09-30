@@ -55,7 +55,7 @@ func (t *Tokenizer) GenerateTokens() error {
 			buff.Reset()
 
 			// Write to buff while tokenizer has a rune that matches a valid keyword or identifier
-			for unicode.IsLetter(t.peek()) || unicode.IsNumber(t.peek()) || '_' == t.peek() {
+			for t.hasRune() && (unicode.IsLetter(t.peek()) || unicode.IsNumber(t.peek()) || '_' == t.peek()) {
 				buff.WriteRune(t.consume())
 			}
 
@@ -75,7 +75,7 @@ func (t *Tokenizer) GenerateTokens() error {
 			buff.Reset()
 
 			// Consume and add to buffer until there are no more numbers
-			for unicode.IsNumber(t.peek()) {
+			for t.hasRune() && unicode.IsNumber(t.peek()) {
 				buff.WriteRune(t.consume())
 			}
 

@@ -79,11 +79,6 @@ func (p *Parser) consume() *tokenizer.Token {
 	return &t
 }
 
-// expected
-func (p *Parser) expected(tokenType tokenizer.TokenType) *utils.Error {
-	return utils.NewError(fmt.Sprintf("Expected token %s but got %s", tokenType, p.peek()), p.peek().Pos)
-}
-
 // unexpectedToken returns an error with current token and token position
 func (p *Parser) unexpectedToken() *utils.Error {
 	return utils.NewError(fmt.Sprintf("Unexpected token %s", p.peek().String()), p.peek().Pos)

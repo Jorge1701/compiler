@@ -34,7 +34,7 @@ func (p *Parser) parseNodeScope() (*NodeScope, error) {
 		return &NodeScope{
 			Stmts: &stmts,
 		}, nil
-	} else {
-		return nil, p.unexpectedToken()
 	}
+
+	return nil, p.unexpectedToken()
 }

@@ -13,7 +13,7 @@ const (
 )
 
 type NodeStmt struct {
-	T        byte
+	T        int
 	Init     *NodeStmtInit
 	Reassign *NodeStmtReassign
 	Scope    *NodeStmtScope
@@ -39,6 +39,10 @@ type NodeStmtExit struct {
 }
 
 func (p *Parser) parseNodeStmt() (node *NodeStmt, err error) {
+	if !p.hasToken() {
+		return nil, fmt.Errorf("Invalid statement: %s", p.noTokensLeft())
+	}
+
 	switch p.peek().Type {
 	case tokenizer.INT:
 		node, err = p.parseNodeStmtInit()
@@ -67,7 +71,7 @@ func (p *Parser) parseNodeStmtInit() (*NodeStmt, error) {
 	if match {
 		p.consume()          // Ignore INT
 		ident := p.consume() // Save IDENTIFIER
-		p.consume()          // Ignore ER
+		p.consume()          // Ignore EQ
 
 		expr, err := p.parseNodeExpr(1)
 		if err != nil {
@@ -107,20 +111,6 @@ func (p *Parser) parseNodeStmtReassign() (*NodeStmt, error) {
 	return nil, p.unexpectedTokenAt(iErr)
 }
 
-func (p *Parser) parseNodeStmtScope() (*NodeStmt, error) {
-	scope, err := p.parseNodeScope()
-	if err != nil {
-		return nil, err
-	}
-
-	return &NodeStmt{
-		T: TypeNodeStmtScope,
-		Scope: &NodeStmtScope{
-			Scope: scope,
-		},
-	}, nil
-}
-
 func (p *Parser) parseNodeStmtExit() (*NodeStmt, error) {
 	if p.peek().IsType(tokenizer.EXIT) {
 		p.consume() // Ignore EXIT
@@ -138,4 +128,18 @@ func (p *Parser) parseNodeStmtExit() (*NodeStmt, error) {
 		}, nil
 	}
 	return nil, p.unexpectedToken()
+}
+
+func (p *Parser) parseNodeStmtScope() (*NodeStmt, error) {
+	scope, err := p.parseNodeScope()
+	if err != nil {
+		return nil, err
+	}
+
+	return &NodeStmt{
+		T: TypeNodeStmtScope,
+		Scope: &NodeStmtScope{
+			Scope: scope,
+		},
+	}, nil
 }

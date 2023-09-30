@@ -36,16 +36,16 @@ func main() {
 	}
 
 	p := parser.NewParser(t.GetTokens())
-	nodeProg, err := p.GenerateNodes()
+	err = p.GenerateNodes()
 	if err != nil {
 		panic(fmt.Sprintf("Parser error: %s", err))
 	}
 
 	// Print parse tree
 	fmt.Println("=== Parse tree === ")
-	parser.PrintNode(nodeProg)
+	parser.PrintNode(p.GetNodes())
 
-	g := generator.NewGenerator(nodeProg)
+	g := generator.NewGenerator(p.GetNodes())
 	nasmBs := g.GenerateNASM()
 	fmt.Println("=== NASM ===")
 	fmt.Println(string(nasmBs))

@@ -11,7 +11,7 @@ const (
 )
 
 type NodeTerm struct {
-	T     byte
+	T     int
 	Lit   *tokenizer.Token
 	Ident *tokenizer.Token
 }

@@ -9,6 +9,8 @@ import (
 type Parser struct {
 	tokens []tokenizer.Token
 	index  int
+
+	nodeProg *NodeProg
 }
 
 func NewParser(tokens []tokenizer.Token) *Parser {
@@ -17,28 +19,35 @@ func NewParser(tokens []tokenizer.Token) *Parser {
 	}
 }
 
-// GenerateNodes parses the list of tokens and returns a parse tree
-func (p *Parser) GenerateNodes() (*NodeProg, error) {
-	nodeProg := &NodeProg{
-		Stmts: []NodeStmt{},
-	}
+// GenerateNodes parses the list of tokens and creates a parse tree
+func (p *Parser) GenerateNodes() error {
+	stmts := []NodeStmt{}
 
 	for p.hasToken() {
 		stmt, err := p.parseNodeStmt()
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		nodeProg.Stmts = append(nodeProg.Stmts, *stmt)
+		stmts = append(stmts, *stmt)
 
 		if p.peek().IsType(tokenizer.SEP) {
 			p.consume()
 		} else {
-			return nil, p.unexpectedToken()
+			return p.unexpectedToken()
 		}
 	}
 
-	return nodeProg, nil
+	p.nodeProg = &NodeProg{
+		Stmts: stmts,
+	}
+
+	return nil
+}
+
+// GetNodes returns generated nodes
+func (p *Parser) GetNodes() *NodeProg {
+	return p.nodeProg
 }
 
 // hasToken returns true if there is a next token
@@ -79,8 +88,16 @@ func (p *Parser) consume() *tokenizer.Token {
 	return &t
 }
 
+// noTokensLeft used when there should be more tokens to parse
+func (p *Parser) noTokensLeft() *utils.Error {
+	return utils.NewError("No tokens left", nil)
+}
+
 // unexpectedToken returns an error with current token and token position
 func (p *Parser) unexpectedToken() *utils.Error {
+	if p.index >= len(p.tokens) {
+		return p.noTokensLeft()
+	}
 	return utils.NewError(fmt.Sprintf("Unexpected token %s", p.peek().String()), p.peek().Pos)
 }
 

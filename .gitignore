@@ -30,5 +30,8 @@ go.work
 # Test folder
 tests/*
 
+cover.out
+cover.html
+
 # Output
 output

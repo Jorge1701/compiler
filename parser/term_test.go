@@ -20,6 +20,7 @@ func TestParseNodeTerm_WhenTypeLiteral(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, TypeNodeTermLit, term.T)
 	assert.Equal(t, "1", term.Lit.Value)
+	assert.Equal(t, 1, p.index)
 }
 
 func TestParseNodeTerm_WhenTypeIdentifier(t *testing.T) {
@@ -34,6 +35,7 @@ func TestParseNodeTerm_WhenTypeIdentifier(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, TypeNodeTermIdent, term.T)
 	assert.Equal(t, "name", term.Ident.Value)
+	assert.Equal(t, 1, p.index)
 }
 
 func TestParseNodeTerm_WhenNoTokens(t *testing.T) {

@@ -39,11 +39,11 @@ func TestParseNodeStmt_WhenStmtInitUnexpectedToken(t *testing.T) {
 		{Type: tokenizer.LITERAL, Value: "1", Pos: utils.NewPosition(6, 2)},
 	})
 
-	stmt, err := p.parseNodeStmt()
+	stmt, err := p.parseNodeStmtInit()
 
 	assert.Error(t, err)
 	assert.Nil(t, stmt)
-	assert.Equal(t, "Invalid statement: Unexpected token (LITERAL, '1') at line 6 and column 2", err.Error())
+	assert.Equal(t, "Unexpected token (LITERAL, '1') at line 6 and column 2", err.Error())
 }
 
 func TestParseNodeStmt_WhenStmtInit(t *testing.T) {
@@ -61,6 +61,7 @@ func TestParseNodeStmt_WhenStmtInit(t *testing.T) {
 	assert.Equal(t, TypeNodeStmtInit, stmt.T)
 	assert.Equal(t, "name", stmt.Init.Ident.Value)
 	assert.NotNil(t, stmt.Init.Expr)
+	assert.Equal(t, 4, p.index)
 }
 
 // TestParseNodeStmtReassign
@@ -70,11 +71,11 @@ func TestParseNodeStmt_WhenStmtReassignUnexpectedToken(t *testing.T) {
 		{Type: tokenizer.LITERAL, Value: "1", Pos: utils.NewPosition(2, 74)},
 	})
 
-	stmt, err := p.parseNodeStmt()
+	stmt, err := p.parseNodeStmtReassign()
 
 	assert.Error(t, err)
 	assert.Nil(t, stmt)
-	assert.Equal(t, "Invalid statement: Unexpected token (LITERAL, '1') at line 2 and column 74", err.Error())
+	assert.Equal(t, "Unexpected token (LITERAL, '1') at line 2 and column 74", err.Error())
 }
 
 func TestParseNodeStmt_WhenStmtReassign(t *testing.T) {
@@ -91,20 +92,20 @@ func TestParseNodeStmt_WhenStmtReassign(t *testing.T) {
 	assert.Equal(t, TypeNodeStmtReassign, stmt.T)
 	assert.Equal(t, "name", stmt.Reassign.Ident.Value)
 	assert.NotNil(t, stmt.Reassign.Expr)
+	assert.Equal(t, 3, p.index)
 }
 
 // TestParseNodeStmtReassign
 func TestParseNodeStmt_WhenStmtExitUnexpectedToken(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
-		{Type: tokenizer.EXIT},
 		{Type: tokenizer.P_L, Value: "(", Pos: utils.NewPosition(3, 7)},
 	})
 
-	stmt, err := p.parseNodeStmt()
+	stmt, err := p.parseNodeStmtExit()
 
 	assert.Error(t, err)
 	assert.Nil(t, stmt)
-	assert.Equal(t, "Invalid statement: Invalid expresion: Unexpected token (P_L, '(') at line 3 and column 7", err.Error())
+	assert.Equal(t, "Unexpected token (P_L, '(') at line 3 and column 7", err.Error())
 }
 
 func TestParseNodeStmt_WhenStmtExit(t *testing.T) {
@@ -119,9 +120,24 @@ func TestParseNodeStmt_WhenStmtExit(t *testing.T) {
 	assert.NotNil(t, stmt)
 	assert.Equal(t, TypeNodeStmtExit, stmt.T)
 	assert.NotNil(t, stmt.Exit.Expr)
+	assert.Equal(t, 2, p.index)
 }
 
 // TestParseNodeStmtScope
+func TestParseNodeStmt_WhenStmtScopeError(t *testing.T) {
+	p := NewParser([]tokenizer.Token{
+		{Type: tokenizer.B_L},
+		{Type: tokenizer.INT},
+		{Type: tokenizer.B_R, Value: "}", Pos: utils.NewPosition(2, 1)},
+	})
+
+	stmt, err := p.parseNodeStmt()
+
+	assert.Error(t, err)
+	assert.Nil(t, stmt)
+	assert.Equal(t, "Invalid statement: Unexpected token (B_R, '}') at line 2 and column 1", err.Error())
+}
+
 func TestParseNodeStmt_WhenStmtScope(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.B_L},
@@ -136,4 +152,5 @@ func TestParseNodeStmt_WhenStmtScope(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.NotNil(t, stmt)
+	assert.Equal(t, 6, p.index)
 }

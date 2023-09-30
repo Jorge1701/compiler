@@ -57,8 +57,8 @@ func (t *Token) GetPrec() int {
 // String returns a printable string that represents the token
 func (t *Token) String() string {
 	if t.Type == SEP {
-		return fmt.Sprintf("(%s, \\n)", t.Type)
+		return fmt.Sprintf("(%s, '\\n')", t.Type)
 	} else {
-		return fmt.Sprintf("(%s, %s)", t.Type, t.Value)
+		return fmt.Sprintf("(%s, '%s')", t.Type, t.Value)
 	}
 }

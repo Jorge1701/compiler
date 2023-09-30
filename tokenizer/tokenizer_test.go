@@ -1,89 +1,94 @@
 package tokenizer
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	examplesDir string = "../examples"
-	resultsDir  string = "../resources/tests/results"
-)
+func TestGenerateTokens_WhenEmptyRunes(t *testing.T) {
+	tokenizer := NewTokenizer([]rune(""))
 
-var exampleFiles = []string{
-	"exit_literal.tbd",
-	"exit_variable.tbd",
-	"operations.tbd",
+	err := tokenizer.GenerateTokens()
+
+	assert.NoError(t, err)
+	assert.Empty(t, tokenizer.GetTokens())
 }
 
-func TestGenerateTokens(t *testing.T) {
-	// Iterates over the example files
-	for _, file := range exampleFiles {
-		// Run a separate test for each example file
-		t.Run(fmt.Sprintf("Test example file '%s'", file),
+func TestGenerateTokens_UnexpectedSymbols(t *testing.T) {
+	unexpectedSymbols := "|!\"#$%&?¡°¬@·~\\¿'´.,:;¨<>"
+
+	for _, unexpectedSymbol := range unexpectedSymbols {
+		t.Run(string(unexpectedSymbol),
 			func(t *testing.T) {
-				testExampleFile(t, file)
+				tokenizer := NewTokenizer([]rune{unexpectedSymbol})
+
+				err := tokenizer.GenerateTokens()
+
+				assert.Error(t, err)
+				assert.Equal(t, fmt.Sprintf("Unexpected symbol '%c' at line 1 and column 1", unexpectedSymbol), err.Error())
 			},
 		)
 	}
 }
 
-func testExampleFile(t *testing.T, exampleFile string) {
-	// Generate tokens for example file
-	tokens := generateTokens(t, fmt.Sprintf("%s/%s", examplesDir, exampleFile))
+func TestGenerateTokens_UnexpectedSymbolAtLineAndColumn(t *testing.T) {
+	text := "int a=1\na=!"
 
-	// Read the expected results
-	expectedTokens := readResultsFile(t, exampleFile)
+	tokenizer := NewTokenizer([]rune(text))
 
-	assert.Equal(t, len(expectedTokens), len(tokens),
-		"Amount of tokens is not the expected",
+	err := tokenizer.GenerateTokens()
+
+	assert.Error(t, err)
+	assert.Equal(t, "Unexpected symbol '!' at line 2 and column 3", err.Error())
+}
+
+func TestGenerateTokens(t *testing.T) {
+	text := "int vAriaBlE2Name23=1235\n{([exit])}\n+-*/"
+
+	tokenizer := NewTokenizer([]rune(text))
+
+	err := tokenizer.GenerateTokens()
+
+	assert.NoError(t, err)
+	assertTokens(t, tokenizer,
+		"(INT, 'int')",
+		"(IDENTIFIER, 'vAriaBlE2Name23')",
+		"(EQ, '=')",
+		"(LITERAL, '1235')",
+		"(SEP, '\\n')",
+		"(B_L, '{')",
+		"(P_L, '(')",
+		"(SB_L, '[')",
+		"(EXIT, 'exit')",
+		"(SB_R, ']')",
+		"(P_R, ')')",
+		"(B_R, '}')",
+		"(SEP, '\\n')",
+		"(ADD, '+')",
+		"(SUB, '-')",
+		"(MUL, '*')",
+		"(DIV, '/')",
+	)
+}
+
+// assertTokens asserts that every generated token should match the expected
+func assertTokens(t *testing.T, tokenizer *Tokenizer, expectedTokens ...string) {
+	equalLength := assert.Equal(t, len(expectedTokens), len(tokenizer.GetTokens()),
+		"Length of generated tokens does not match",
 	)
 
-	for i, expected := range expectedTokens {
-		actual := tokens[i].String()
+	if equalLength {
+		for i, actualToken := range tokenizer.GetTokens() {
+			tokenMatches := assert.Equal(t, expectedTokens[i], actualToken.String(),
+				fmt.Sprintf("Token at position %d does not match", i),
+			)
 
-		assert.Equal(t, expected, actual,
-			fmt.Sprintf("Non matching token at line %d", i+1),
-		)
+			// Returns after the first one that does not match get a shorter fail message
+			if !tokenMatches {
+				return
+			}
+		}
 	}
-}
-
-// generateTokens reads the example file, creates a tokenizer
-// and returns the generated tokens
-func generateTokens(t *testing.T, file string) []Token {
-	bs, err := os.ReadFile(file)
-	if err != nil {
-		t.Fatalf("Error opening example file '%s': %s", file, err)
-	}
-
-	tokenizer := NewTokenizer(bytes.Runes(bs))
-	tokenizer.GenerateTokens()
-	return tokenizer.GetTokens()
-}
-
-// readResultsFile reads the contents of the '.tokens' file which contains
-// the expected tokens for the given 'file'
-func readResultsFile(t *testing.T, file string) []string {
-	f, err := os.Open(fmt.Sprintf("%s/%s.tokens", resultsDir, file))
-	if err != nil {
-		t.Fatalf("Error opening results file for '%s': %s", file, err)
-	}
-
-	fileScanner := bufio.NewScanner(f)
-
-	fileScanner.Split(bufio.ScanLines)
-
-	var lines []string
-	for fileScanner.Scan() {
-		lines = append(lines, fileScanner.Text())
-	}
-
-	f.Close()
-
-	return lines
 }

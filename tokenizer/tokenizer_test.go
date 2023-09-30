@@ -16,8 +16,8 @@ func TestGenerateTokens_WhenEmptyRunes(t *testing.T) {
 	assert.Empty(t, tokenizer.GetTokens())
 }
 
-func TestGenerateTokens_WhenUnexpectedSymbol(t *testing.T) {
-	unexpectedSymbols := "|!\"#$%&?¡°¬@·~\\¿'´.,:;¨"
+func TestGenerateTokens_UnexpectedSymbols(t *testing.T) {
+	unexpectedSymbols := "|!\"#$%&?¡°¬@·~\\¿'´.,:;¨<>"
 
 	for _, unexpectedSymbol := range unexpectedSymbols {
 		t.Run(string(unexpectedSymbol),
@@ -27,9 +27,21 @@ func TestGenerateTokens_WhenUnexpectedSymbol(t *testing.T) {
 				err := tokenizer.GenerateTokens()
 
 				assert.Error(t, err)
+				assert.Equal(t, fmt.Sprintf("Unexpected symbol '%c' at line 1 and column 1", unexpectedSymbol), err.Error())
 			},
 		)
 	}
+}
+
+func TestGenerateTokens_UnexpectedSymbolAtLineAndColumn(t *testing.T) {
+	text := "int a=1\na=!"
+
+	tokenizer := NewTokenizer([]rune(text))
+
+	err := tokenizer.GenerateTokens()
+
+	assert.Error(t, err)
+	assert.Equal(t, "Unexpected symbol '!' at line 2 and column 3", err.Error())
 }
 
 func TestGenerateTokens(t *testing.T) {

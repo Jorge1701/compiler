@@ -5,19 +5,14 @@ import (
 )
 
 type Error struct {
-	Msg    string
-	Row    int
-	Column int
+	msg string
+	pos *FilePosition
 }
 
 func NewError(msg string, pos *FilePosition) *Error {
-	return &Error{
-		Msg:    msg,
-		Row:    pos.Row,
-		Column: pos.Column,
-	}
+	return &Error{msg, pos}
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("%s at line %d and column %d", e.Msg, e.Row, e.Column)
+	return fmt.Sprintf("%s at line %d and column %d", e.msg, e.pos.line, e.pos.column)
 }

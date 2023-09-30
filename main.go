@@ -38,7 +38,7 @@ func main() {
 	p := parser.NewParser(t.GetTokens())
 	nodeProg, err := p.GenerateNodes()
 	if err != nil {
-		fmt.Println(err)
+		panic(fmt.Sprintf("Parser error: %s", err))
 	}
 
 	// Print parse tree

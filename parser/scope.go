@@ -21,7 +21,7 @@ func (p *Parser) parseNodeScope() (NodeScope, error) {
 				return NodeScope{}, fmt.Errorf("Error parsing statement inside scope")
 			}
 
-			stmts = append(stmts, stmt)
+			stmts = append(stmts, *stmt)
 
 			if p.peek().IsType(tokenizer.SEP) {
 				p.consume()

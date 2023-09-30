@@ -1,8 +1,0 @@
-(INT, int)
-(IDENTIFIER, num)
-(EQ, =)
-(LITERAL, 13)
-(SEP, \n)
-(EXIT, exit)
-(IDENTIFIER, num)
-(SEP, \n)

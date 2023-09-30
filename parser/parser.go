@@ -79,9 +79,14 @@ func (p *Parser) consume() *tokenizer.Token {
 	return &t
 }
 
+// expected
+func (p *Parser) expected(tokenType tokenizer.TokenType) *utils.Error {
+	return utils.NewError(fmt.Sprintf("Expected token %s but got %s", tokenType, p.peek()), p.peek().Pos)
+}
+
 // unexpectedToken returns an error with current token and token position
 func (p *Parser) unexpectedToken() *utils.Error {
-	return utils.NewError(fmt.Sprintf("Unexpected token '%s'", p.peek().Value), p.peek().Pos)
+	return utils.NewError(fmt.Sprintf("Unexpected token %s", p.peek().String()), p.peek().Pos)
 }
 
 // unexpectedTokenAt returns an error referencing token at index
@@ -90,5 +95,5 @@ func (p *Parser) unexpectedTokenAt(index int) *utils.Error {
 	if t.IsType(tokenizer.SEP) {
 		return utils.NewError("Unexpected line break", t.Pos)
 	}
-	return utils.NewError(fmt.Sprintf("Unexpected token '%s'", t.Value), t.Pos)
+	return utils.NewError(fmt.Sprintf("Unexpected token %s", t.String()), t.Pos)
 }

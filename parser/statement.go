@@ -44,10 +44,13 @@ func (p *Parser) parseNodeStmt() (node *NodeStmt, err error) {
 		node, err = p.parseNodeStmtInit()
 	case tokenizer.IDENTIFIER:
 		node, err = p.parseNodeStmtReassign()
-	case tokenizer.B_L:
-		node, err = p.parseNodeStmtScope()
 	case tokenizer.EXIT:
 		node, err = p.parseNodeStmtExit()
+	case tokenizer.B_L:
+		node, err = p.parseNodeStmtScope()
+		if err != nil {
+			return nil, err
+		}
 	default:
 		err = p.unexpectedToken()
 	}
@@ -113,7 +116,7 @@ func (p *Parser) parseNodeStmtScope() (*NodeStmt, error) {
 	return &NodeStmt{
 		T: TypeNodeStmtScope,
 		Scope: &NodeStmtScope{
-			Scope: &scope,
+			Scope: scope,
 		},
 	}, nil
 }

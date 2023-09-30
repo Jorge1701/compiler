@@ -57,7 +57,7 @@ func (p *Parser) hasToken() bool {
 
 // hasTokens returns true if there is still an 'amt' of tokens left
 func (p *Parser) hasTokens(amt int) bool {
-	return p.index+amt < len(p.tokens)
+	return p.index+amt-1 < len(p.tokens)
 }
 
 // peek returns the current token without changing the index

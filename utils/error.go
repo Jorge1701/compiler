@@ -14,5 +14,8 @@ func NewError(msg string, pos *FilePosition) *Error {
 }
 
 func (e *Error) Error() string {
+	if e.pos == nil {
+		return e.msg
+	}
 	return fmt.Sprintf("%s at line %d and column %d", e.msg, e.pos.line, e.pos.column)
 }

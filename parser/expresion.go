@@ -11,7 +11,7 @@ const (
 )
 
 type NodeExpr struct {
-	T    byte
+	T    int
 	Term *NodeTerm
 	Oper *NodeOper
 }
@@ -25,10 +25,7 @@ func (p *Parser) parseNodeExpr(minPrec int) (*NodeExpr, error) {
 
 		return oper, nil
 	} else if p.hasToken() && p.peek().MatchAny(tokenizer.LITERAL, tokenizer.IDENTIFIER) {
-		term, err := p.parseNodeTerm()
-		if err != nil {
-			return nil, err
-		}
+		term, _ := p.parseNodeTerm()
 
 		return &NodeExpr{
 			T:    TypeNodeExprTerm,

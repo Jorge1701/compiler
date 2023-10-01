@@ -2,6 +2,7 @@ package parser
 
 import (
 	"compiler/tokenizer"
+	"fmt"
 )
 
 type NodeScope struct {
@@ -9,7 +10,7 @@ type NodeScope struct {
 }
 
 func (p *Parser) parseNodeScope() (*NodeScope, error) {
-	if p.peek().IsType(tokenizer.B_L) {
+	if p.hasToken() && p.peek().IsType(tokenizer.B_L) {
 		p.consume() // Ignore opening B_L
 		if p.peek().IsType(tokenizer.SEP) {
 			p.consume() // Ignore following SEP
@@ -36,5 +37,5 @@ func (p *Parser) parseNodeScope() (*NodeScope, error) {
 		}, nil
 	}
 
-	return nil, p.unexpectedToken()
+	return nil, fmt.Errorf("Invalid scope: %s", p.unexpectedToken())
 }

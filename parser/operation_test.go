@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"compiler/tokenizer"
 	"fmt"
 	"testing"
 
@@ -62,10 +61,4 @@ func TestParseNodeExprOper(t *testing.T) {
 			},
 		)
 	}
-}
-
-func generateTokensFor(text string) []tokenizer.Token {
-	t := tokenizer.NewTokenizer([]rune(text))
-	t.GenerateTokens()
-	return t.GetTokens()
 }

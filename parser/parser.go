@@ -49,11 +49,19 @@ func (p *Parser) hasTokens(amt int) bool {
 
 // peek returns the current token without changing the index
 func (p *Parser) peek() *tokenizer.Token {
+	if p.index >= len(p.tokens) {
+		return nil
+	}
+
 	return &p.tokens[p.index]
 }
 
 // peekAhead returns the token at a given position ahead of the current token without changing the index
 func (p *Parser) peekAhead(offSet int) *tokenizer.Token {
+	if p.index+offSet >= len(p.tokens) {
+		return nil
+	}
+
 	return &p.tokens[p.index+offSet]
 }
 
@@ -70,6 +78,10 @@ func (p *Parser) matchSeq(tokenTypes ...tokenizer.TokenType) (bool, int) {
 
 // consume returns the current token and increases the index so that the next operations handle the next token
 func (p *Parser) consume() *tokenizer.Token {
+	if p.index >= len(p.tokens) {
+		return nil
+	}
+
 	t := p.tokens[p.index]
 	p.index++
 	return &t
@@ -90,9 +102,14 @@ func (p *Parser) unexpectedToken() *utils.Error {
 
 // unexpectedTokenAt returns an error referencing token at index
 func (p *Parser) unexpectedTokenAt(index int) *utils.Error {
+	if index >= len(p.tokens) {
+		return utils.NewError("No tokens left", nil)
+	}
+
 	t := p.tokens[index]
 	if t.IsType(tokenizer.SEP) {
 		return utils.NewError("Unexpected line break", t.Pos)
 	}
+
 	return utils.NewError(fmt.Sprintf("Unexpected token %s", t.String()), t.Pos)
 }

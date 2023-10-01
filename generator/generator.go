@@ -158,7 +158,7 @@ func (g *Generator) GenerateNASM() []byte {
 	g.textBuff.WriteString("global _start\n")
 	g.textBuff.WriteString("_start:\n")
 
-	for _, s := range g.nodeProg.Stmts {
+	for _, s := range *g.nodeProg.Stmts {
 		g.generateStmt(s)
 	}
 

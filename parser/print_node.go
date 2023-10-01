@@ -27,10 +27,10 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 	case *NodeProg:
 		buff.WriteString(fmt.Sprintln("NodeProg"))
 
-		for i, stmt := range node.Stmts {
-			NodeToString(stmt, indent, i == len(node.Stmts)-1, buff)
+		for i, stmt := range *node.Stmts {
+			NodeToString(&stmt, indent, i == len(*node.Stmts)-1, buff)
 		}
-	case NodeStmt:
+	case *NodeStmt:
 		buff.WriteString(fmt.Sprintln("NodeStmt"))
 
 		switch node.T {
@@ -59,7 +59,7 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 		buff.WriteString(fmt.Sprintln("NodeTypeStmtScope"))
 
 		for i, stmt := range *node.Scope.Stmts {
-			NodeToString(stmt, indent, i == len(*node.Scope.Stmts)-1, buff)
+			NodeToString(&stmt, indent, i == len(*node.Scope.Stmts)-1, buff)
 		}
 	case *NodeStmtExit:
 		buff.WriteString(fmt.Sprintln("NodeTypeStmtExit"))

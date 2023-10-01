@@ -113,7 +113,7 @@ func TestNodeToString_WhenCaseSwitchNotImplemented(t *testing.T) {
 }
 
 func TestNodeToString_WhenCaseStatementNotImplemented(t *testing.T) {
-	stmt := NodeStmt{
+	stmt := &NodeStmt{
 		T: 4,
 	}
 

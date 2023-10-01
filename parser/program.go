@@ -6,7 +6,7 @@ import (
 )
 
 type NodeProg struct {
-	Stmts []NodeStmt
+	Stmts *[]NodeStmt
 }
 
 func (p *Parser) parseNodeProg() (*NodeProg, error) {
@@ -32,6 +32,6 @@ func (p *Parser) parseNodeProg() (*NodeProg, error) {
 	}
 
 	return &NodeProg{
-		Stmts: stmts,
+		Stmts: &stmts,
 	}, nil
 }

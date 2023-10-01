@@ -43,7 +43,9 @@ func main() {
 
 	// Print parse tree
 	fmt.Println("=== Parse tree === ")
-	parser.PrintNode(p.GetNodes())
+	buff := bytes.NewBuffer([]byte{})
+	parser.NodeToString(p.GetNodes(), "", true, buff)
+	fmt.Println(buff.String())
 
 	g := generator.NewGenerator(p.GetNodes())
 	nasmBs := g.GenerateNASM()

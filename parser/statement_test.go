@@ -46,6 +46,20 @@ func TestParseNodeStmt_WhenStmtInitUnexpectedToken(t *testing.T) {
 	assert.Equal(t, "Unexpected token (LITERAL, '1') at line 6 and column 2", err.Error())
 }
 
+func TestParseNodeStmt_WhenStmtInitInvalidExpresion(t *testing.T) {
+	p := NewParser([]tokenizer.Token{
+		{Type: tokenizer.INT},
+		{Type: tokenizer.IDENTIFIER},
+		{Type: tokenizer.EQ},
+	})
+
+	stmt, err := p.parseNodeStmtInit()
+
+	assert.Error(t, err)
+	assert.Nil(t, stmt)
+	assert.Equal(t, "Invalid expresion: No tokens left", err.Error())
+}
+
 func TestParseNodeStmt_WhenStmtInit(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.INT},
@@ -78,6 +92,19 @@ func TestParseNodeStmt_WhenStmtReassignUnexpectedToken(t *testing.T) {
 	assert.Equal(t, "Unexpected token (LITERAL, '1') at line 2 and column 74", err.Error())
 }
 
+func TestParseNodeStmt_WhenStmtReassignInvalidExpresion(t *testing.T) {
+	p := NewParser([]tokenizer.Token{
+		{Type: tokenizer.IDENTIFIER, Value: "name"},
+		{Type: tokenizer.EQ},
+	})
+
+	stmt, err := p.parseNodeStmtReassign()
+
+	assert.Error(t, err)
+	assert.Nil(t, stmt)
+	assert.Equal(t, "Invalid expresion: No tokens left", err.Error())
+}
+
 func TestParseNodeStmt_WhenStmtReassign(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
@@ -106,6 +133,18 @@ func TestParseNodeStmt_WhenStmtExitUnexpectedToken(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, stmt)
 	assert.Equal(t, "Unexpected token (P_L, '(') at line 3 and column 7", err.Error())
+}
+
+func TestParseNodeStmt_WhenStmtExitInvalidExpresion(t *testing.T) {
+	p := NewParser([]tokenizer.Token{
+		{Type: tokenizer.EXIT},
+	})
+
+	stmt, err := p.parseNodeStmtExit()
+
+	assert.Error(t, err)
+	assert.Nil(t, stmt)
+	assert.Equal(t, "Invalid expresion: No tokens left", err.Error())
 }
 
 func TestParseNodeStmt_WhenStmtExit(t *testing.T) {

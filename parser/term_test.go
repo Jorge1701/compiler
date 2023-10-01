@@ -10,7 +10,7 @@ import (
 
 func TestParseNodeTerm_WhenTypeLiteral(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
 	})
 
@@ -26,7 +26,7 @@ func TestParseNodeTerm_WhenTypeLiteral(t *testing.T) {
 func TestParseNodeTerm_WhenTypeIdentifier(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 	})
 
 	term, err := p.parseNodeTerm()
@@ -52,7 +52,7 @@ func TestParseNodeTerm_WhenInvalidTerm(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.P_L, Value: "(", Pos: utils.NewPosition(2, 5)},
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 	})
 
 	term, err := p.parseNodeTerm()

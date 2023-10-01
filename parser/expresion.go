@@ -24,7 +24,7 @@ func (p *Parser) parseNodeExpr(minPrec int) (*NodeExpr, error) {
 		}
 
 		return oper, nil
-	} else if p.hasToken() && p.peek().MatchAny(tokenizer.LITERAL, tokenizer.IDENTIFIER) {
+	} else if p.hasToken() && p.peek().MatchAny(tokenizer.IDENTIFIER, tokenizer.INT_LITERAL, tokenizer.BOOL_LITERAL) {
 		term, _ := p.parseNodeTerm()
 
 		return &NodeExpr{

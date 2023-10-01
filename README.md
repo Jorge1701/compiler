@@ -69,12 +69,14 @@ This does not check for gramatical errors like a missing closing parentheses, it
 |Keyword|Value|Description
 |-|-|-
 |INT|`int`|Integer type
+|BOOL|`bool`|Boolean type
 |EXIT|`exit`|Exit command
 
 |Matchers|Regex|Description
 |-|-|-
 |IDENTIFIER|`[a-zA-Z][a-zA-Z0-9_]*`|Identifies names of variables
-|LITERAL|`[0-9]+`|Represents literal numbers
+|INT_LITERAL|`[0-9]+`|Represents literal numbers
+|BOOL_LITERAL|`true\|false`|Represents literal booleans
 
 ## Parser
 `[To be refactored]`

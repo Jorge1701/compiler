@@ -65,8 +65,10 @@ func (t *Tokenizer) GenerateTokens() error {
 			if foundMatch {
 				// If value is in the list of keywords then we create a token of that type
 				t.createToken(tokenType, value)
+			} else if value == "true" || value == "false" {
+				t.createToken(BOOL_LITERAL, value)
 			} else {
-				// If it's not in the list of keywords then it's an identifier
+				// If it's not any of the above it's an identifier
 				t.createToken(IDENTIFIER, value)
 			}
 		} else if unicode.IsNumber(t.peek()) {
@@ -80,7 +82,7 @@ func (t *Tokenizer) GenerateTokens() error {
 			}
 
 			// All numbers is a literal
-			t.createToken(LITERAL, buff.String())
+			t.createToken(INT_LITERAL, buff.String())
 		} else {
 			// If there is an unknown symbol we just return an error
 			return utils.NewError(

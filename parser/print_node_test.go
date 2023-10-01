@@ -85,14 +85,15 @@ const result = `└─ NodeProg
 
 func TestNodeToString(t *testing.T) {
 	program := `int a = 1 + 4
-    int b = 4 - 2
-    int c = 2 * 2
-    int d = 10 / 5
-    {
-        a = b + c - d
-    }
-    exit a
-    `
+        int b = 4 - 2
+        int c = 2 * 2
+        int d = 10 / 5
+        {
+            a = b + c - d
+        }
+        exit a
+        `
+
 	p := NewParser(generateTokensFor(program))
 
 	err := p.GenerateNodes()

@@ -21,26 +21,13 @@ func NewParser(tokens []tokenizer.Token) *Parser {
 
 // GenerateNodes parses the list of tokens and creates a parse tree
 func (p *Parser) GenerateNodes() error {
-	stmts := []NodeStmt{}
+	prog, err := p.parseNodeProg()
 
-	for p.hasToken() {
-		stmt, err := p.parseNodeStmt()
-		if err != nil {
-			return err
-		}
-
-		stmts = append(stmts, *stmt)
-
-		if p.peek().IsType(tokenizer.SEP) {
-			p.consume()
-		} else {
-			return p.unexpectedToken()
-		}
+	if err != nil {
+		return err
 	}
 
-	p.nodeProg = &NodeProg{
-		Stmts: stmts,
-	}
+	p.nodeProg = prog
 
 	return nil
 }

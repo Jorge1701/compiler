@@ -13,12 +13,6 @@ const (
 	space        string = "   "
 )
 
-func PrintNode(n interface{}) {
-	buff := bytes.NewBuffer([]byte{})
-	NodeToString(n, "", true, buff)
-	fmt.Println(buff.String())
-}
-
 func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 	buff.WriteString(fmt.Sprintf(indent))
 	if last {
@@ -49,7 +43,7 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 		case TypeNodeStmtExit:
 			NodeToString(node.Exit, indent, true, buff)
 		default:
-			caseNotImplemented("NodeStmt", indent, last, buff)
+			panicWith("statement")
 		}
 	case *NodeStmtInit:
 		buff.WriteString(fmt.Sprintln("NodeTypeStmtInit"))
@@ -80,7 +74,7 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 		case TypeNodeExprOper:
 			NodeToString(node.Oper, indent, true, buff)
 		default:
-			caseNotImplemented("NodeExpr", indent, last, buff)
+			panicWith("expresion")
 		}
 	case *NodeTerm:
 		buff.WriteString(fmt.Sprintln("NodeTerm"))
@@ -91,7 +85,7 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 		case TypeNodeTermIdent:
 			NodeToString(node.Ident, indent, true, buff)
 		default:
-			caseNotImplemented("NodeTerm", indent, last, buff)
+			panicWith("term")
 		}
 	case *NodeOper:
 		buff.WriteString(fmt.Sprintln("NodeOper"))
@@ -102,10 +96,10 @@ func NodeToString(n interface{}, indent string, last bool, buff *bytes.Buffer) {
 	case *tokenizer.Token:
 		buff.WriteString(fmt.Sprintf("Token %s\n", node.String()))
 	default:
-		caseNotImplemented("switch", indent, last, buff)
+		panicWith("switch")
 	}
 }
 
-func caseNotImplemented(caze, indent string, last bool, buff *bytes.Buffer) {
-	buff.WriteString(fmt.Sprintf("NodeToString case '%s' not implemented\n", caze))
+func panicWith(caze string) {
+	panic(fmt.Sprintf("PrintNode not implemented for case: %s", caze))
 }

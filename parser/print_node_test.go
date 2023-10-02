@@ -16,10 +16,10 @@ const result = `└─ NodeProg
    │           ├─ Token (ADD, '+')
    │           ├─ NodeExpr
    │           │  └─ NodeTerm
-   │           │     └─ Token (LITERAL, '1')
+   │           │     └─ Token (INT_LITERAL, '1')
    │           └─ NodeExpr
    │              └─ NodeTerm
-   │                 └─ Token (LITERAL, '4')
+   │                 └─ Token (INT_LITERAL, '4')
    ├─ NodeStmt
    │  └─ NodeTypeStmtInit
    │     ├─ Token (IDENTIFIER, 'b')
@@ -28,10 +28,10 @@ const result = `└─ NodeProg
    │           ├─ Token (SUB, '-')
    │           ├─ NodeExpr
    │           │  └─ NodeTerm
-   │           │     └─ Token (LITERAL, '4')
+   │           │     └─ Token (INT_LITERAL, '4')
    │           └─ NodeExpr
    │              └─ NodeTerm
-   │                 └─ Token (LITERAL, '2')
+   │                 └─ Token (INT_LITERAL, '2')
    ├─ NodeStmt
    │  └─ NodeTypeStmtInit
    │     ├─ Token (IDENTIFIER, 'c')
@@ -40,10 +40,10 @@ const result = `└─ NodeProg
    │           ├─ Token (MUL, '*')
    │           ├─ NodeExpr
    │           │  └─ NodeTerm
-   │           │     └─ Token (LITERAL, '2')
+   │           │     └─ Token (INT_LITERAL, '2')
    │           └─ NodeExpr
    │              └─ NodeTerm
-   │                 └─ Token (LITERAL, '2')
+   │                 └─ Token (INT_LITERAL, '2')
    ├─ NodeStmt
    │  └─ NodeTypeStmtInit
    │     ├─ Token (IDENTIFIER, 'd')
@@ -52,10 +52,10 @@ const result = `└─ NodeProg
    │           ├─ Token (DIV, '/')
    │           ├─ NodeExpr
    │           │  └─ NodeTerm
-   │           │     └─ Token (LITERAL, '10')
+   │           │     └─ Token (INT_LITERAL, '10')
    │           └─ NodeExpr
    │              └─ NodeTerm
-   │                 └─ Token (LITERAL, '5')
+   │                 └─ Token (INT_LITERAL, '5')
    ├─ NodeStmt
    │  └─ NodeTypeStmtScope
    │     └─ NodeStmt

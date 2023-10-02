@@ -28,7 +28,7 @@ func (t *Token) IsType(tokenType TokenType) bool {
 
 // IsTerm returns true if the token can be a term in an operation
 func (t *Token) IsTerm() bool {
-	if t.MatchAny(LITERAL, IDENTIFIER) {
+	if t.MatchAny(IDENTIFIER, INT_LITERAL, BOOL_LITERAL) {
 		return true
 	}
 	return false

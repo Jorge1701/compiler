@@ -82,13 +82,13 @@ func TestParser_UnexpectedTokenAt_WhenLineBreak(t *testing.T) {
 
 func TestParser_UnexpectedTokenAt(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
-		{Type: tokenizer.LITERAL, Value: "123", Pos: utils.NewPosition(53, 2)},
+		{Type: tokenizer.INT_LITERAL, Value: "123", Pos: utils.NewPosition(53, 2)},
 	})
 
 	err := p.unexpectedTokenAt(0)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "Unexpected token (LITERAL, '123') at line 53 and column 2", err.Error())
+	assert.Equal(t, "Unexpected token (INT_LITERAL, '123') at line 53 and column 2", err.Error())
 }
 
 // TestConsume
@@ -191,7 +191,7 @@ func TestParser_HasTokens_WhenTokens(t *testing.T) {
 func TestParser_MatchSeqTrue(t *testing.T) {
 	p := NewParser(generateTokensFor("int a = 1"))
 
-	match, iErr := p.matchSeq(tokenizer.INT, tokenizer.IDENTIFIER, tokenizer.EQ, tokenizer.LITERAL)
+	match, iErr := p.matchSeq(tokenizer.INT, tokenizer.IDENTIFIER, tokenizer.EQ, tokenizer.INT_LITERAL)
 
 	assert.True(t, match)
 	assert.Equal(t, -1, iErr)
@@ -200,7 +200,7 @@ func TestParser_MatchSeqTrue(t *testing.T) {
 func TestParser_MatchSeqFalse(t *testing.T) {
 	p := NewParser(generateTokensFor("int a = 1"))
 
-	match, iErr := p.matchSeq(tokenizer.INT, tokenizer.EQ, tokenizer.LITERAL)
+	match, iErr := p.matchSeq(tokenizer.INT, tokenizer.EQ, tokenizer.INT_LITERAL)
 
 	assert.False(t, match)
 	assert.Equal(t, 1, iErr)

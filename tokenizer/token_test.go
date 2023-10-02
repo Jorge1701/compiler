@@ -1,6 +1,7 @@
 package tokenizer
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ func TestMatchAny_WhenMatch(t *testing.T) {
 func TestMatchAny_WhenDoesNotMatch(t *testing.T) {
 	token := newTokenType(IDENTIFIER)
 
-	result := token.MatchAny(SEP, LITERAL, B_L)
+	result := token.MatchAny(SEP, INT_LITERAL, B_L)
 
 	assert.False(t, result)
 }
@@ -41,96 +42,82 @@ func TestIsType_WhenDoesNotMatch(t *testing.T) {
 }
 
 // TestIsTerm
-func TestIsTerm_WhenMatch(t *testing.T) {
-	terms := []TokenType{LITERAL, IDENTIFIER}
+func TestIsTerm(t *testing.T) {
+	term := []TokenType{IDENTIFIER, INT_LITERAL, BOOL_LITERAL}
 
-	for _, term := range terms {
-		t.Run(string(term),
+	for _, tokenType := range allTokenTypes {
+		t.Run(string(tokenType),
 			func(t *testing.T) {
-				token := newTokenType(term)
+				token := newTokenType(tokenType)
 
 				result := token.IsTerm()
 
-				assert.True(t, result)
+				assert.Equal(t, token.MatchAny(term...), result)
 			},
 		)
 	}
-}
-
-func TestIsTerm_WhenDoesNotMatch(t *testing.T) {
-	token := newTokenType(P_L)
-
-	result := token.IsTerm()
-
-	assert.False(t, result)
 }
 
 // TestIsOperator
-func TestIsOperator_WhenMatch(t *testing.T) {
-	operators := []TokenType{ADD, SUB, MUL, DIV}
+func TestIsOperator(t *testing.T) {
+	operators := []TokenType{ADD, SUB, DIV, MUL}
 
-	for _, operator := range operators {
-		t.Run(string(operator),
+	for _, tokenType := range allTokenTypes {
+		t.Run(string(tokenType),
 			func(t *testing.T) {
-				token := newTokenType(operator)
+				token := newTokenType(tokenType)
 
 				result := token.IsOperator()
 
-				assert.True(t, result)
+				assert.Equal(t, token.MatchAny(operators...), result)
 			},
 		)
 	}
-}
-
-func TestIsOperator_WhenDoesNotMatch(t *testing.T) {
-	token := newTokenType(EQ)
-
-	result := token.IsOperator()
-
-	assert.False(t, result)
 }
 
 // TestGetPrec
 func TestGetPrec(t *testing.T) {
-	cases := map[TokenType]int{
+	tokensWithPrecDefined := map[TokenType]int{
 		ADD: 1,
 		SUB: 1,
 		MUL: 2,
 		DIV: 2,
-		SEP: 0,
-		EQ:  0,
-		P_L: 0,
-		P_R: 0,
 	}
 
-	for tokenType, expected := range cases {
+	for _, tokenType := range allTokenTypes {
 		t.Run(string(tokenType),
 			func(t *testing.T) {
 				token := newTokenType(tokenType)
 
 				result := token.GetPrec()
 
-				assert.Equal(t, expected, result)
+				if prec, isDefined := tokensWithPrecDefined[tokenType]; isDefined {
+					assert.Equal(t, prec, result)
+				} else {
+					assert.Equal(t, 0, result)
+				}
 			},
 		)
 	}
 }
 
 // TestString
-func TestString_WhenTypeIsSep(t *testing.T) {
-	token := newToken(SEP, "should-not-print")
+func TestString(t *testing.T) {
+	for _, tokenType := range allTokenTypes {
+		t.Run(string(tokenType),
+			func(t *testing.T) {
+				token := newToken(tokenType, "expected")
 
-	result := token.String()
+				result := token.String()
 
-	assert.Equal(t, "(SEP, '\\n')", result)
-}
-
-func TestString_WhenTypeIsAny(t *testing.T) {
-	token := newToken(LITERAL, "value")
-
-	result := token.String()
-
-	assert.Equal(t, "(LITERAL, 'value')", result)
+				if tokenType == SEP {
+					assert.Equal(t, "(SEP, '\\n')", result)
+				} else {
+					assert.Equal(t, fmt.Sprintf("(%s, 'expected')", tokenType), result)
+				}
+			},
+		)
+	}
 }
 
 func newTokenType(t TokenType) *Token {

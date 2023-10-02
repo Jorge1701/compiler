@@ -20,10 +20,12 @@ const (
 	EQ TokenType = "EQ"
 
 	INT  TokenType = "INT"
+	BOOL TokenType = "BOOL"
 	EXIT TokenType = "EXIT"
 
-	IDENTIFIER TokenType = "IDENTIFIER"
-	LITERAL    TokenType = "LITERAL"
+	IDENTIFIER   TokenType = "IDENTIFIER"
+	INT_LITERAL  TokenType = "INT_LITERAL"
+	BOOL_LITERAL TokenType = "BOOL_LITERAL"
 )
 
 // Defines a map of all the tokens that are a singe character (rune) for quick access
@@ -45,5 +47,6 @@ var singleRuneTokens = map[rune]TokenType{
 // Definition of all the keywords in the language and their respective tokens
 var listOfKeywords = map[string]TokenType{
 	"int":  INT,
+	"bool": BOOL,
 	"exit": EXIT,
 }

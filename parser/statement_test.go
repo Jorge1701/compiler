@@ -36,14 +36,14 @@ func TestParseNodeStmt_WhenStmtInitUnexpectedToken(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.INT},
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
-		{Type: tokenizer.LITERAL, Value: "1", Pos: utils.NewPosition(6, 2)},
+		{Type: tokenizer.INT_LITERAL, Value: "1", Pos: utils.NewPosition(6, 2)},
 	})
 
 	stmt, err := p.parseNodeStmtInit()
 
 	assert.Error(t, err)
 	assert.Nil(t, stmt)
-	assert.Equal(t, "Unexpected token (LITERAL, '1') at line 6 and column 2", err.Error())
+	assert.Equal(t, "Unexpected token (INT_LITERAL, '1') at line 6 and column 2", err.Error())
 }
 
 func TestParseNodeStmt_WhenStmtInitInvalidExpresion(t *testing.T) {
@@ -65,7 +65,7 @@ func TestParseNodeStmt_WhenStmtInit(t *testing.T) {
 		{Type: tokenizer.INT},
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
 		{Type: tokenizer.EQ},
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 	})
 
 	stmt, err := p.parseNodeStmt()
@@ -82,14 +82,14 @@ func TestParseNodeStmt_WhenStmtInit(t *testing.T) {
 func TestParseNodeStmt_WhenStmtReassignUnexpectedToken(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
-		{Type: tokenizer.LITERAL, Value: "1", Pos: utils.NewPosition(2, 74)},
+		{Type: tokenizer.INT_LITERAL, Value: "1", Pos: utils.NewPosition(2, 74)},
 	})
 
 	stmt, err := p.parseNodeStmtReassign()
 
 	assert.Error(t, err)
 	assert.Nil(t, stmt)
-	assert.Equal(t, "Unexpected token (LITERAL, '1') at line 2 and column 74", err.Error())
+	assert.Equal(t, "Unexpected token (INT_LITERAL, '1') at line 2 and column 74", err.Error())
 }
 
 func TestParseNodeStmt_WhenStmtReassignInvalidExpresion(t *testing.T) {
@@ -109,7 +109,7 @@ func TestParseNodeStmt_WhenStmtReassign(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
 		{Type: tokenizer.EQ},
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 	})
 
 	stmt, err := p.parseNodeStmt()
@@ -150,7 +150,7 @@ func TestParseNodeStmt_WhenStmtExitInvalidExpresion(t *testing.T) {
 func TestParseNodeStmt_WhenStmtExit(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
 		{Type: tokenizer.EXIT},
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 	})
 
 	stmt, err := p.parseNodeStmt()
@@ -183,7 +183,7 @@ func TestParseNodeStmt_WhenStmtScope(t *testing.T) {
 		{Type: tokenizer.INT},
 		{Type: tokenizer.IDENTIFIER, Value: "name"},
 		{Type: tokenizer.EQ},
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 		{Type: tokenizer.B_R},
 	})
 

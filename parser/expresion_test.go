@@ -32,7 +32,7 @@ func TestParseNodeExpr_WhenEmptyTokens(t *testing.T) {
 
 func TestParseNodeExpr_WhenTerm(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 	})
 
 	expr, err := p.parseNodeExpr(1)
@@ -56,9 +56,9 @@ func TestParseNodeExpr_WhenOperValid(t *testing.T) {
 		t.Run(operator.String(),
 			func(t *testing.T) {
 				p := NewParser([]tokenizer.Token{
-					{Type: tokenizer.LITERAL, Value: "1"},
+					{Type: tokenizer.INT_LITERAL, Value: "1"},
 					operator,
-					{Type: tokenizer.LITERAL, Value: "2"},
+					{Type: tokenizer.INT_LITERAL, Value: "2"},
 				})
 
 				expr, err := p.parseNodeExpr(1)
@@ -77,7 +77,7 @@ func TestParseNodeExpr_WhenOperValid(t *testing.T) {
 
 func TestParseNodeExpr_WhenOperInvalidExpresion(t *testing.T) {
 	p := NewParser([]tokenizer.Token{
-		{Type: tokenizer.LITERAL, Value: "1"},
+		{Type: tokenizer.INT_LITERAL, Value: "1"},
 		{Type: tokenizer.ADD, Value: "+"},
 		{Type: tokenizer.EQ, Value: "=", Pos: utils.NewPosition(3, 2)},
 	})

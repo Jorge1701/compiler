@@ -17,7 +17,7 @@ type NodeTerm struct {
 }
 
 func (p *Parser) parseNodeTerm() (*NodeTerm, error) {
-	if p.hasToken() && p.peek().IsType(tokenizer.LITERAL) {
+	if p.hasToken() && p.peek().MatchAny(tokenizer.INT_LITERAL) {
 		return &NodeTerm{
 			T:   TypeNodeTermLit,
 			Lit: p.consume(),
